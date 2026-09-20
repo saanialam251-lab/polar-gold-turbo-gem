@@ -1,0 +1,38 @@
+{
+  "url": "http://127.0.0.1:8081/",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "Orbit",
+      "hasCanvas": false,
+      "bodyTextLen": 1010,
+      "bodyTextHash": "04da4cf8ea55339ca01f13b453b65f7c16fae81a9e6f0b9638353a160fc31502",
+      "bodyTextPrefix": "Orbit Home Progress CBSE PRACTICE · CLASSES 9–12 Master every or",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-built.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "Orbit",
+      "hasCanvas": false,
+      "bodyTextLen": 996,
+      "bodyTextHash": "329bbb4190e6a5d8e1b202c335b38bc113312e1aa1d2ef573fa61f030ddf98ec",
+      "bodyTextPrefix": "Orbit CBSE PRACTICE · CLASSES 9–12 Master every orbit of the syl",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-built-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/app-builder-built.json",
+  "divergesFromBaseline": false,
+  "baselineReasons": []
+}

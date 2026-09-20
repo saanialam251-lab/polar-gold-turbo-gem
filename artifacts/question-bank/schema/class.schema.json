@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://cbse-practice-app.local/schemas/class.schema.json",
+  "title": "CBSE Class Schema",
+  "description": "Top-level metadata for an entire class (9 / 10 / 11 / 12).",
+  "type": "object",
+  "required": [
+    "class",
+    "subjects",
+    "syllabus_version"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "class": {
+      "type": "integer",
+      "enum": [9, 10, 11, 12]
+    },
+    "display_name": {
+      "type": "string",
+      "examples": ["Class 9", "Class 10", "Class 11", "Class 12"]
+    },
+    "subjects": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["Physics", "Chemistry", "Mathematics"]
+      },
+      "minItems": 1,
+      "maxItems": 3
+    },
+    "syllabus_version": {
+      "type": "string",
+      "description": "e.g. 2026-27 for new Class 9 syllabus, 2025-26 for Class 10, etc."
+    },
+    "notes": {
+      "type": ["string", "null"],
+      "description": "Any special notes about the syllabus year"
+    },
+    "is_new_syllabus": {
+      "type": "boolean",
+      "description": "True only for Class 9 (2026-27 redesign)"
+    }
+  }
+}

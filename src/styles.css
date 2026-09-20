@@ -1,0 +1,71 @@
+@import "tailwindcss";
+@import "katex/dist/katex.min.css";
+
+@theme {
+  --font-display: "Fraunces", "Times New Roman", serif;
+  --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --color-ink: #0e1524;
+  --color-ink-soft: #172033;
+  --color-paper: #f3eee4;
+  --color-paper-2: #e8e0d2;
+  --color-copper: #c9893a;
+  --color-copper-2: #e0b066;
+  --color-sage: #3d6b4f;
+  --color-sage-2: #7da88a;
+  --color-muted: #8b8578;
+  --color-line: #d9d0c0;
+  --color-danger: #9b3d3d;
+  --color-ok: #2f6a46;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1.25rem;
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  html,
+  body,
+  #app {
+    min-height: 100%;
+  }
+  body {
+    margin: 0;
+    font-family: var(--font-sans);
+    background: var(--color-paper);
+    color: var(--color-ink);
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+.orbit-grid {
+  background-image:
+    radial-gradient(circle at 12% 8%, rgb(201 137 58 / 0.12), transparent 32%),
+    radial-gradient(circle at 88% 0%, rgb(61 107 79 / 0.1), transparent 28%),
+    linear-gradient(var(--color-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-line) 1px, transparent 1px);
+  background-size: auto, auto, 48px 48px, 48px 48px;
+}
+
+.katex-display {
+  margin: 0.4em 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+.katex {
+  font-size: 1.08em;
+}

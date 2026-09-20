@@ -1,0 +1,60 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://cbse-practice-app.local/schemas/media.schema.json",
+  "title": "CBSE Media Schema",
+  "description": "Metadata for any image, diagram or media file used in questions or explanations.",
+  "type": "object",
+  "required": [
+    "media_id",
+    "filename",
+    "type",
+    "class",
+    "subject"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "media_id": {
+      "type": "string",
+      "description": "Unique media identifier"
+    },
+    "filename": {
+      "type": "string",
+      "description": "Actual file name including extension"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["image", "diagram", "graph", "chemical-structure", "ray-diagram", "circuit", "table"]
+    },
+    "class": {
+      "type": "integer",
+      "enum": [9, 10, 11, 12]
+    },
+    "subject": {
+      "type": "string",
+      "enum": ["Physics", "Chemistry", "Mathematics"]
+    },
+    "chapter_id": {
+      "type": ["string", "null"]
+    },
+    "topic_id": {
+      "type": ["string", "null"]
+    },
+    "alt_text": {
+      "type": "string",
+      "description": "Accessible description of the media"
+    },
+    "caption": {
+      "type": ["string", "null"]
+    },
+    "width": {
+      "type": ["integer", "null"]
+    },
+    "height": {
+      "type": ["integer", "null"]
+    },
+    "source": {
+      "type": ["string", "null"],
+      "description": "Origin of the media (NCERT, self-created, etc.)"
+    }
+  }
+}

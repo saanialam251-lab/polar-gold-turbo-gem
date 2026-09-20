@@ -1,0 +1,758 @@
+question-bank/
+│
+├── README.md
+│
+├── schema/
+│   ├── question.schema.json
+│   ├── topic.schema.json
+│   ├── chapter.schema.json
+│   ├── subject.schema.json
+│   ├── class.schema.json
+│   ├── explanation.schema.json
+│   ├── pyq.schema.json
+│   ├── media.schema.json
+│   ├── attempt.schema.json
+│   └── test.schema.json
+│
+│
+│ ═══════════════════════════════════════════════════════════
+│  CLASS 9  (New NCERT 2026-27 — PCM Only)
+│ ═══════════════════════════════════════════════════════════
+│
+├── class-9/
+│   │
+│   ├── class-meta.json
+│   │
+│   ├── physics/
+│   │   ├── subject-meta.json
+│   │   ├── chapter-index.json
+│   │   │
+│   │   ├── chapters/
+│   │   │   │
+│   │   │   ├── chapter-01-describing-motion-around-us/
+│   │   │   │   ├── chapter-meta.json
+│   │   │   │   ├── topics.json
+│   │   │   │   │
+│   │   │   │   ├── topic-01-distance-displacement/
+│   │   │   │   │   ├── medium.json
+│   │   │   │   │   ├── hard.json
+│   │   │   │   │   ├── explanations.json
+│   │   │   │   │   └── media/
+│   │   │   │   │
+│   │   │   │   ├── topic-02-speed-velocity/
+│   │   │   │   │   ├── medium.json
+│   │   │   │   │   ├── hard.json
+│   │   │   │   │   ├── explanations.json
+│   │   │   │   │   └── media/
+│   │   │   │   │
+│   │   │   │   ├── topic-03-acceleration/
+│   │   │   │   ├── topic-04-graphical-representation-motion/
+│   │   │   │   ├── topic-05-equations-of-motion/
+│   │   │   │   ├── topic-06-uniform-circular-motion/
+│   │   │   │   ├── topic-07-relative-motion/
+│   │   │   │   ├── topic-08-uniform-nonuniform-motion/
+│   │   │   │   └── topic-09-scalar-vector-quantities/
+│   │   │   │
+│   │   │   ├── chapter-mixed/
+│   │   │   │   ├── medium.json
+│   │   │   │   └── hard.json
+│   │   │   │
+│   │   │   ├── pyq/
+│   │   │   │   └── pyq.json
+│   │   │   │
+│   │   │   └── media/
+│   │   │       ├── motion-graph-xt.png
+│   │   │       ├── motion-graph-vt.png
+│   │   │       └── circular-motion.png
+│   │   │
+│   │   │   ├── chapter-02-how-forces-affect-motion/
+│   │   │   │   ├── chapter-meta.json
+│   │   │   │   ├── topics.json
+│   │   │   │   ├── topic-01-force-concept/
+│   │   │   │   ├── topic-02-balanced-unbalanced-forces/
+│   │   │   │   ├── topic-03-force-of-friction/
+│   │   │   │   ├── topic-04-newtons-first-law/
+│   │   │   │   ├── topic-05-newtons-second-law/
+│   │   │   │   ├── topic-06-newtons-third-law/
+│   │   │   │   ├── topic-07-momentum-conservation/
+│   │   │   │   ├── topic-08-applications-laws-of-motion/
+│   │   │   │   ├── topic-09-inertia-and-mass/
+│   │   │   │   ├── topic-10-action-reaction-forces/
+│   │   │   │   ├── chapter-mixed/
+│   │   │   │   ├── pyq/
+│   │   │   │   └── media/
+│   │   │   │
+│   │   │   ├── chapter-03-work-energy-simple-machines/
+│   │   │   │   ├── topic-01-work-done-constant-force/
+│   │   │   │   ├── topic-02-kinetic-energy/
+│   │   │   │   ├── topic-03-potential-energy/
+│   │   │   │   ├── topic-04-work-energy-theorem/
+│   │   │   │   ├── topic-05-law-conservation-energy/
+│   │   │   │   ├── topic-06-power/
+│   │   │   │   ├── topic-07-simple-machines/
+│   │   │   │   ├── topic-08-mechanical-advantage/
+│   │   │   │   ├── topic-09-commercial-unit-energy/
+│   │   │   │   ├── topic-10-transformation-of-energy/
+│   │   │   │   ├── chapter-mixed/
+│   │   │   │   ├── pyq/
+│   │   │   │   └── media/
+│   │   │   │
+│   │   │   └── chapter-04-sound-waves/
+│   │   │       ├── topic-01-production-propagation-sound/
+│   │   │       ├── topic-02-sound-longitudinal-wave/
+│   │   │       ├── topic-03-wave-characteristics/
+│   │   │       ├── topic-04-speed-sound-media/
+│   │   │       ├── topic-05-pitch-loudness/
+│   │   │       ├── topic-06-reflection-sound-echo/
+│   │   │       ├── topic-07-echolocation-sonar/
+│   │   │       ├── topic-08-audible-inaudible-range/
+│   │   │       ├── topic-09-ultrasound-applications/
+│   │   │       ├── topic-10-structure-human-ear/
+│   │   │       ├── chapter-mixed/
+│   │   │       ├── pyq/
+│   │   │       └── media/
+│   │   │
+│   │   └── subject-media/
+│   │       ├── icons/
+│   │       └── banners/
+│   │
+│   ├── chemistry/
+│   │   ├── subject-meta.json
+│   │   ├── chapter-index.json
+│   │   │
+│   │   ├── chapters/
+│   │   │   ├── chapter-01-exploring-mixtures/
+│   │   │   │   ├── chapter-meta.json
+│   │   │   │   ├── topics.json
+│   │   │   │   ├── topic-01-homogeneous-heterogeneous/
+│   │   │   │   ├── topic-02-solutions-suspensions-colloids/
+│   │   │   │   ├── topic-03-concentration-solutions/
+│   │   │   │   ├── topic-04-solubility-temperature/
+│   │   │   │   ├── topic-05-separation-filtration-evaporation/
+│   │   │   │   ├── topic-06-separation-distillation-chromatography/
+│   │   │   │   ├── topic-07-applications-separation/
+│   │   │   │   ├── topic-08-properties-mixtures/
+│   │   │   │   ├── topic-09-separation-gases-air/
+│   │   │   │   ├── topic-10-purification-water/
+│   │   │   │   ├── chapter-mixed/
+│   │   │   │   ├── pyq/
+│   │   │   │   └── media/
+│   │   │   │
+│   │   │   ├── chapter-02-journey-inside-atom/
+│   │   │   │   ├── topic-01-subatomic-particles/
+│   │   │   │   ├── topic-02-thomsons-model/
+│   │   │   │   ├── topic-03-rutherfords-model/
+│   │   │   │   ├── topic-04-bohrs-model/
+│   │   │   │   ├── topic-05-electron-distribution/
+│   │   │   │   ├── topic-06-atomic-mass-number/
+│   │   │   │   ├── topic-07-valency/
+│   │   │   │   ├── topic-08-isotopes-isobars/
+│   │   │   │   ├── topic-09-atomic-molecular-mass/
+│   │   │   │   ├── topic-10-discovery-subatomic-particles/
+│   │   │   │   ├── chapter-mixed/
+│   │   │   │   ├── pyq/
+│   │   │   │   └── media/
+│   │   │   │
+│   │   │   └── chapter-03-atomic-foundations-matter/
+│   │   │       ├── topic-01-law-conservation-mass/
+│   │   │       ├── topic-02-law-constant-proportions/
+│   │   │       ├── topic-03-daltons-atomic-theory/
+│   │   │       ├── topic-04-molecules-elements-compounds/
+│   │   │       ├── topic-05-ions-cations-anions/
+│   │   │       ├── topic-06-writing-chemical-formulae/
+│   │   │       ├── topic-07-molecular-mass-formula-mass/
+│   │   │       ├── topic-08-mole-concept/
+│   │   │       ├── topic-09-avogadros-number/
+│   │   │       ├── topic-10-molar-mass-calculations/
+│   │   │       ├── chapter-mixed/
+│   │   │       ├── pyq/
+│   │   │       └── media/
+│   │   │
+│   │   └── subject-media/
+│   │       ├── chemical-structures/
+│   │       └── reaction-diagrams/
+│   │
+│   └── mathematics/
+│       ├── subject-meta.json
+│       ├── chapter-index.json
+│       │
+│       ├── chapters/
+│       │   ├── chapter-01-use-of-coordinates/
+│       │   │   ├── topic-01-cartesian-plane-axes/
+│       │   │   ├── topic-02-coordinates-of-point/
+│       │   │   ├── topic-03-plotting-points/
+│       │   │   ├── topic-04-quadrants-signs/
+│       │   │   ├── topic-05-distance-from-axes/
+│       │   │   ├── topic-06-applications-coordinate-geometry/
+│       │   │   ├── topic-07-distance-formula-intro/
+│       │   │   ├── topic-08-plotting-graphs/
+│       │   │   ├── chapter-mixed/
+│       │   │   ├── pyq/
+│       │   │   └── media/
+│       │   │
+│       │   ├── chapter-02-linear-polynomials/
+│       │   │   ├── topic-01-polynomials-one-variable/
+│       │   │   ├── topic-02-degree-types/
+│       │   │   ├── topic-03-zeros-of-polynomial/
+│       │   │   ├── topic-04-remainder-theorem/
+│       │   │   ├── topic-05-factor-theorem/
+│       │   │   ├── topic-06-factorisation-techniques/
+│       │   │   ├── topic-07-algebraic-identities/
+│       │   │   ├── topic-08-division-algorithm/
+│       │   │   ├── topic-09-graphs-linear-polynomials/
+│       │   │   ├── chapter-mixed/
+│       │   │   ├── pyq/
+│       │   │   └── media/
+│       │   │
+│       │   ├── chapter-03-world-of-numbers/
+│       │   │   ├── topic-01-natural-integers-rational-irrational/
+│       │   │   ├── topic-02-number-line-representation/
+│       │   │   ├── topic-03-terminating-nonterminating/
+│       │   │   ├── topic-04-nth-root-real-numbers/
+│       │   │   ├── topic-05-laws-of-exponents/
+│       │   │   ├── topic-06-rationalisation/
+│       │   │   ├── topic-07-surds-simplification/
+│       │   │   ├── topic-08-real-numbers-properties/
+│       │   │   ├── topic-09-operations-real-numbers/
+│       │   │   ├── chapter-mixed/
+│       │   │   ├── pyq/
+│       │   │   └── media/
+│       │   │
+│       │   ├── chapter-04-exploring-algebraic-identities/
+│       │   │   ├── topic-01-standard-identities/
+│       │   │   ├── topic-02-expanding-using-identities/
+│       │   │   ├── topic-03-factorisation-using-identities/
+│       │   │   ├── topic-04-applications-simplification/
+│       │   │   ├── topic-05-evaluation-using-identities/
+│       │   │   ├── topic-06-problem-solving-identities/
+│       │   │   ├── topic-07-abc-identity/
+│       │   │   ├── topic-08-a3b3c3-identity/
+│       │   │   ├── chapter-mixed/
+│       │   │   ├── pyq/
+│       │   │   └── media/
+│       │   │
+│       │   ├── chapter-05-geometry/
+│       │   │   ├── topic-01-lines-angles/
+│       │   │   ├── topic-02-triangles-properties/
+│       │   │   ├── topic-03-congruence-triangles/
+│       │   │   ├── topic-04-quadrilaterals/
+│       │   │   ├── topic-05-circles-properties/
+│       │   │   ├── topic-06-angle-sum-properties/
+│       │   │   ├── topic-07-parallel-lines-transversals/
+│       │   │   ├── topic-08-pythagoras-theorem/
+│       │   │   ├── chapter-mixed/
+│       │   │   ├── pyq/
+│       │   │   └── media/
+│       │   │
+│       │   ├── chapter-06-perimeter-area/
+│       │   │   ├── topic-01-perimeter-area-rectangles-triangles/
+│       │   │   ├── topic-02-area-parallelograms-trapeziums/
+│       │   │   ├── topic-03-circumference-area-circle/
+│       │   │   ├── topic-04-area-sectors-segments/
+│       │   │   ├── topic-05-surface-area-cubes-cuboids/
+│       │   │   ├── topic-06-volume-cubes-cuboids/
+│       │   │   ├── topic-07-applications-word-problems/
+│       │   │   ├── topic-08-herons-formula/
+│       │   │   ├── topic-09-surface-area-volume-cones-spheres/
+│       │   │   ├── chapter-mixed/
+│       │   │   ├── pyq/
+│       │   │   └── media/
+│       │   │
+│       │   ├── chapter-07-introduction-probability/
+│       │   │   ├── topic-01-chance-randomness/
+│       │   │   ├── topic-02-experiments-outcomes/
+│       │   │   ├── topic-03-empirical-probability/
+│       │   │   ├── topic-04-events-favourable-outcomes/
+│       │   │   ├── topic-05-probability-scale/
+│       │   │   ├── topic-06-simple-numerical-problems/
+│       │   │   ├── topic-07-complementary-events/
+│       │   │   ├── topic-08-impossible-certain-events/
+│       │   │   ├── chapter-mixed/
+│       │   │   ├── pyq/
+│       │   │   └── media/
+│       │   │
+│       │   └── chapter-08-sequences-progressions/
+│       │       ├── topic-01-patterns-sequences/
+│       │       ├── topic-02-arithmetic-progressions/
+│       │       ├── topic-03-sum-first-n-terms-ap/
+│       │       ├── topic-04-geometric-progressions/
+│       │       ├── topic-05-applications-progressions/
+│       │       ├── topic-06-common-difference-ratio/
+│       │       ├── topic-07-nth-term-gp/
+│       │       ├── chapter-mixed/
+│       │       ├── pyq/
+│       │       └── media/
+│       │
+│       └── subject-media/
+│           ├── graphs/
+│           └── geometric-figures/
+│
+│
+│ ═══════════════════════════════════════════════════════════
+│  CLASS 10  (NCERT 2025-26 — PCM Only)
+│ ═══════════════════════════════════════════════════════════
+│
+├── class-10/
+│   │
+│   ├── class-meta.json
+│   │
+│   ├── physics/
+│   │   ├── subject-meta.json
+│   │   ├── chapter-index.json
+│   │   │
+│   │   ├── chapters/
+│   │   │   ├── chapter-01-light-reflection-refraction/
+│   │   │   │   ├── chapter-meta.json
+│   │   │   │   ├── topics.json
+│   │   │   │   ├── topic-01-laws-of-reflection/
+│   │   │   │   ├── topic-02-image-formation-mirrors/
+│   │   │   │   ├── topic-03-mirror-formula-magnification/
+│   │   │   │   ├── topic-04-refraction-snells-law/
+│   │   │   │   ├── topic-05-refraction-glass-slab/
+│   │   │   │   ├── topic-06-lenses-image-formation/
+│   │   │   │   ├── topic-07-lens-formula-power/
+│   │   │   │   ├── topic-08-total-internal-reflection/
+│   │   │   │   ├── topic-09-refraction-spherical-lenses/
+│   │   │   │   ├── topic-10-applications-reflection-refraction/
+│   │   │   │   ├── chapter-mixed/
+│   │   │   │   ├── pyq/
+│   │   │   │   └── media/
+│   │   │   │
+│   │   │   ├── chapter-02-human-eye-colourful-world/
+│   │   │   │   ├── topic-01-structure-human-eye/
+│   │   │   │   ├── topic-02-accommodation-vision-defects/
+│   │   │   │   ├── topic-03-dispersion-light/
+│   │   │   │   ├── topic-04-scattering-light/
+│   │   │   │   ├── topic-05-atmospheric-refraction/
+│   │   │   │   ├── topic-06-twinkling-stars-sunrise/
+│   │   │   │   ├── topic-07-tyndall-effect/
+│   │   │   │   ├── topic-08-colour-sky-sun/
+│   │   │   │   ├── chapter-mixed/
+│   │   │   │   ├── pyq/
+│   │   │   │   └── media/
+│   │   │   │
+│   │   │   ├── chapter-03-electricity/
+│   │   │   │   ├── topic-01-electric-current-circuit/
+│   │   │   │   ├── topic-02-potential-difference-ohms-law/
+│   │   │   │   ├── topic-03-resistance-resistivity/
+│   │   │   │   ├── topic-04-series-parallel-resistors/
+│   │   │   │   ├── topic-05-heating-effect-joules-law/
+│   │   │   │   ├── topic-06-electric-power-energy/
+│   │   │   │   ├── topic-07-domestic-circuits-safety/
+│   │   │   │   ├── topic-08-kirchhoffs-laws/
+│   │   │   │   ├── topic-09-cells-emf-internal-resistance/
+│   │   │   │   ├── chapter-mixed/
+│   │   │   │   ├── pyq/
+│   │   │   │   └── media/
+│   │   │   │
+│   │   │   ├── chapter-04-magnetic-effects-current/
+│   │   │   │   ├── topic-01-magnetic-field-current-conductor/
+│   │   │   │   ├── topic-02-right-hand-thumb-rule/
+│   │   │   │   ├── topic-03-magnetic-field-loop-solenoid/
+│   │   │   │   ├── topic-04-force-current-conductor/
+│   │   │   │   ├── topic-05-electric-motor/
+│   │   │   │   ├── topic-06-electromagnetic-induction/
+│   │   │   │   ├── topic-07-electric-generator/
+│   │   │   │   ├── topic-08-domestic-electric-circuits/
+│   │   │   │   ├── topic-09-flemings-rules/
+│   │   │   │   ├── chapter-mixed/
+│   │   │   │   ├── pyq/
+│   │   │   │   └── media/
+│   │   │   │
+│   │   │   └── chapter-05-sources-of-energy/
+│   │   │       ├── topic-01-conventional-sources/
+│   │   │       ├── topic-02-nonconventional-sources/
+│   │   │       ├── topic-03-environmental-consequences/
+│   │   │       ├── topic-04-renewable-nonrenewable/
+│   │   │       ├── topic-05-solar-cells-cookers/
+│   │   │       ├── topic-06-wind-energy-mills/
+│   │   │       ├── topic-07-biogas-biomass/
+│   │   │       ├── topic-08-tidal-wave-energy/
+│   │   │       ├── topic-09-geothermal-energy/
+│   │   │       ├── topic-10-nuclear-energy/
+│   │   │       ├── chapter-mixed/
+│   │   │       ├── pyq/
+│   │   │       └── media/
+│   │   │
+│   │   └── subject-media/
+│   │       ├── ray-diagrams/
+│   │       ├── circuit-diagrams/
+│   │       └── magnetic-field-diagrams/
+│   │
+│   ├── chemistry/
+│   │   ├── subject-meta.json
+│   │   ├── chapter-index.json
+│   │   │
+│   │   ├── chapters/
+│   │   │   ├── chapter-01-chemical-reactions-equations/
+│   │   │   │   ├── topic-01-types-chemical-reactions/
+│   │   │   │   ├── topic-02-balancing-equations/
+│   │   │   │   ├── topic-03-combination-decomposition/
+│   │   │   │   ├── topic-04-displacement-double-displacement/
+│   │   │   │   ├── topic-05-oxidation-reduction/
+│   │   │   │   ├── topic-06-corrosion-rancidity/
+│   │   │   │   ├── topic-07-effects-oxidation/
+│   │   │   │   ├── topic-08-exothermic-endothermic/
+│   │   │   │   ├── topic-09-redox-daily-life/
+│   │   │   │   ├── chapter-mixed/
+│   │   │   │   ├── pyq/
+│   │   │   │   └── media/
+│   │   │   │
+│   │   │   ├── chapter-02-acids-bases-salts/
+│   │   │   │   ├── topic-01-properties-acids-bases/
+│   │   │   │   ├── topic-02-ph-scale-indicators/
+│   │   │   │   ├── topic-03-neutralisation-reactions/
+│   │   │   │   ├── topic-04-salts-types/
+│   │   │   │   ├── topic-05-common-salt-compounds/
+│   │   │   │   ├── topic-06-baking-soda-washing-soda/
+│   │   │   │   ├── topic-07-plaster-of-paris/
+│   │   │   │   ├── topic-08-uses-daily-life/
+│   │   │   │   ├── topic-09-bleaching-powder/
+│   │   │   │   ├── topic-10-water-of-crystallisation/
+│   │   │   │   ├── chapter-mixed/
+│   │   │   │   ├── pyq/
+│   │   │   │   └── media/
+│   │   │   │
+│   │   │   ├── chapter-03-metals-nonmetals/
+│   │   │   │   ├── topic-01-physical-properties/
+│   │   │   │   ├── topic-02-chemical-properties-metals/
+│   │   │   │   ├── topic-03-reactivity-series/
+│   │   │   │   ├── topic-04-displacement-reactions/
+│   │   │   │   ├── topic-05-extraction-metals/
+│   │   │   │   ├── topic-06-corrosion-prevention/
+│   │   │   │   ├── topic-07-ionic-compounds/
+│   │   │   │   ├── topic-08-alloys-properties/
+│   │   │   │   ├── topic-09-metallurgy-processes/
+│   │   │   │   ├── chapter-mixed/
+│   │   │   │   ├── pyq/
+│   │   │   │   └── media/
+│   │   │   │
+│   │   │   ├── chapter-04-carbon-compounds/
+│   │   │   │   ├── topic-01-bonding-carbon/
+│   │   │   │   ├── topic-02-versatile-nature-carbon/
+│   │   │   │   ├── topic-03-hydrocarbons/
+│   │   │   │   ├── topic-04-isomerism/
+│   │   │   │   ├── topic-05-functional-groups-nomenclature/
+│   │   │   │   ├── topic-06-alcohols-carboxylic-acids/
+│   │   │   │   ├── topic-07-soaps-detergents/
+│   │   │   │   ├── topic-08-chemical-properties/
+│   │   │   │   ├── topic-09-homologous-series/
+│   │   │   │   ├── topic-10-ethanol-ethanoic-acid/
+│   │   │   │   ├── chapter-mixed/
+│   │   │   │   ├── pyq/
+│   │   │   │   └── media/
+│   │   │   │
+│   │   │   └── chapter-05-periodic-classification/
+│   │   │       ├── topic-01-genesis-periodic-classification/
+│   │   │       ├── topic-02-modern-periodic-law-table/
+│   │   │       ├── topic-03-trends-atomic-size-valency/
+│   │   │       ├── topic-04-metallic-nonmetallic-properties/
+│   │   │       ├── topic-05-ionisation-enthalpy/
+│   │   │       ├── topic-06-electron-gain-enthalpy/
+│   │   │       ├── topic-07-electronegativity/
+│   │   │       ├── topic-08-periodic-trends-oxidation/
+│   │   │       ├── topic-09-chemical-reactivity-trends/
+│   │   │       ├── topic-10-anomalies-limitations/
+│   │   │       ├── chapter-mixed/
+│   │   │       ├── pyq/
+│   │   │       └── media/
+│   │   │
+│   │   └── subject-media/
+│   │       ├── chemical-structures/
+│   │       └── reaction-mechanisms/
+│   │
+│   └── mathematics/
+│       ├── subject-meta.json
+│       ├── chapter-index.json
+│       │
+│       ├── chapters/
+│       │   ├── chapter-01-real-numbers/
+│       │   │   ├── topic-01-euclids-division-lemma/
+│       │   │   ├── topic-02-fundamental-theorem-arithmetic/
+│       │   │   ├── topic-03-hcf-lcm/
+│       │   │   ├── topic-04-irrational-numbers-proofs/
+│       │   │   ├── topic-05-decimal-expansion/
+│       │   │   ├── topic-06-terminating-nonterminating/
+│       │   │   ├── chapter-mixed/
+│       │   │   ├── pyq/
+│       │   │   └── media/
+│       │   │
+│       │   ├── chapter-02-polynomials/
+│       │   │   ├── topic-01-zeroes-geometrical-meaning/
+│       │   │   ├── topic-02-relationship-zeroes-coefficients/
+│       │   │   ├── topic-03-division-algorithm/
+│       │   │   ├── topic-04-quadratic-cubic-polynomials/
+│       │   │   ├── topic-05-graphs-polynomials/
+│       │   │   ├── chapter-mixed/
+│       │   │   ├── pyq/
+│       │   │   └── media/
+│       │   │
+│       │   ├── chapter-03-linear-equations-two-variables/
+│       │   │   ├── topic-01-graphical-method/
+│       │   │   ├── topic-02-substitution-method/
+│       │   │   ├── topic-03-elimination-method/
+│       │   │   ├── topic-04-cross-multiplication/
+│       │   │   ├── topic-05-consistency-equations/
+│       │   │   ├── topic-06-word-problems/
+│       │   │   ├── chapter-mixed/
+│       │   │   ├── pyq/
+│       │   │   └── media/
+│       │   │
+│       │   ├── chapter-04-quadratic-equations/
+│       │   │   ├── topic-01-standard-form/
+│       │   │   ├── topic-02-factorisation-method/
+│       │   │   ├── topic-03-completing-square/
+│       │   │   ├── topic-04-quadratic-formula/
+│       │   │   ├── topic-05-nature-of-roots/
+│       │   │   ├── topic-06-word-problems/
+│       │   │   ├── chapter-mixed/
+│       │   │   ├── pyq/
+│       │   │   └── media/
+│       │   │
+│       │   ├── chapter-05-arithmetic-progressions/
+│       │   │   ├── topic-01-nth-term-ap/
+│       │   │   ├── topic-02-sum-first-n-terms/
+│       │   │   ├── topic-03-properties-ap/
+│       │   │   ├── topic-04-word-problems-applications/
+│       │   │   ├── chapter-mixed/
+│       │   │   ├── pyq/
+│       │   │   └── media/
+│       │   │
+│       │   ├── chapter-06-triangles/
+│       │   │   ├── topic-01-similar-figures/
+│       │   │   ├── topic-02-similarity-triangles/
+│       │   │   ├── topic-03-basic-proportionality-theorem/
+│       │   │   ├── topic-04-areas-similar-triangles/
+│       │   │   ├── topic-05-pythagoras-theorem-converse/
+│       │   │   ├── chapter-mixed/
+│       │   │   ├── pyq/
+│       │   │   └── media/
+│       │   │
+│       │   ├── chapter-07-coordinate-geometry/
+│       │   │   ├── topic-01-distance-formula/
+│       │   │   ├── topic-02-section-formula/
+│       │   │   ├── topic-03-midpoint-formula/
+│       │   │   ├── topic-04-area-of-triangle/
+│       │   │   ├── topic-05-collinearity-points/
+│       │   │   ├── topic-06-coordinate-geometry-problems/
+│       │   │   ├── chapter-mixed/
+│       │   │   ├── pyq/
+│       │   │   └── media/
+│       │   │
+│       │   ├── chapter-08-introduction-trigonometry/
+│       │   │   ├── topic-01-trigonometric-ratios/
+│       │   │   ├── topic-02-ratios-specific-angles/
+│       │   │   ├── topic-03-complementary-angles/
+│       │   │   ├── topic-04-trigonometric-identities/
+│       │   │   ├── topic-05-applications-identities/
+│       │   │   ├── chapter-mixed/
+│       │   │   ├── pyq/
+│       │   │   └── media/
+│       │   │
+│       │   ├── chapter-09-applications-trigonometry/
+│       │   │   ├── topic-01-heights-distances/
+│       │   │   ├── topic-02-angle-elevation-depression/
+│       │   │   ├── topic-03-line-of-sight/
+│       │   │   ├── topic-04-word-problems-diagrams/
+│       │   │   ├── chapter-mixed/
+│       │   │   ├── pyq/
+│       │   │   └── media/
+│       │   │
+│       │   ├── chapter-10-circles/
+│       │   │   ├── topic-01-tangent-to-circle/
+│       │   │   ├── topic-02-properties-tangents/
+│       │   │   ├── topic-03-tangent-external-point/
+│       │   │   ├── topic-04-theorems-tangents/
+│       │   │   ├── topic-05-length-of-tangent/
+│       │   │   ├── chapter-mixed/
+│       │   │   ├── pyq/
+│       │   │   └── media/
+│       │   │
+│       │   ├── chapter-11-areas-related-circles/
+│       │   │   ├── topic-01-area-circle-sector/
+│       │   │   ├── topic-02-area-of-segment/
+│       │   │   ├── topic-03-length-of-arc/
+│       │   │   ├── topic-04-combinations-plane-figures/
+│       │   │   ├── chapter-mixed/
+│       │   │   ├── pyq/
+│       │   │   └── media/
+│       │   │
+│       │   ├── chapter-12-surface-areas-volumes/
+│       │   │   ├── topic-01-surface-area-combination-solids/
+│       │   │   ├── topic-02-volume-combination-solids/
+│       │   │   ├── topic-03-conversion-solids/
+│       │   │   ├── topic-04-frustum-cone/
+│       │   │   ├── topic-05-applications/
+│       │   │   ├── chapter-mixed/
+│       │   │   ├── pyq/
+│       │   │   └── media/
+│       │   │
+│       │   ├── chapter-13-statistics/
+│       │   │   ├── topic-01-mean-grouped-data/
+│       │   │   ├── topic-02-mode-grouped-data/
+│       │   │   ├── topic-03-median-grouped-data/
+│       │   │   ├── topic-04-cumulative-frequency/
+│       │   │   ├── topic-05-ogive-curves/
+│       │   │   ├── chapter-mixed/
+│       │   │   ├── pyq/
+│       │   │   └── media/
+│       │   │
+│       │   └── chapter-14-probability/
+│       │       ├── topic-01-theoretical-probability/
+│       │       ├── topic-02-equally-likely-outcomes/
+│       │       ├── topic-03-complementary-events/
+│       │       ├── topic-04-dice-coins-cards/
+│       │       ├── topic-05-impossible-certain-events/
+│       │       ├── chapter-mixed/
+│       │       ├── pyq/
+│       │       └── media/
+│       │
+│       └── subject-media/
+│           ├── graphs/
+│           └── geometric-figures/
+│
+│
+│ ═══════════════════════════════════════════════════════════
+│  CLASS 11  (NCERT — PCM Only)  — Full structure follows same pattern
+│ ═══════════════════════════════════════════════════════════
+│
+├── class-11/
+│   ├── class-meta.json
+│   │
+│   ├── physics/
+│   │   ├── subject-meta.json
+│   │   ├── chapter-index.json
+│   │   ├── chapters/
+│   │   │   ├── chapter-01-units-measurements/
+│   │   │   ├── chapter-02-motion-straight-line/
+│   │   │   ├── chapter-03-motion-plane/
+│   │   │   ├── chapter-04-laws-of-motion/
+│   │   │   ├── chapter-05-work-energy-power/
+│   │   │   ├── chapter-06-system-particles-rotational/
+│   │   │   ├── chapter-07-gravitation/
+│   │   │   │   ├── chapter-meta.json
+│   │   │   │   ├── topics.json
+│   │   │   │   ├── topic-01-keplers-laws/
+│   │   │   │   ├── topic-02-universal-law-gravitation/
+│   │   │   │   ├── topic-03-gravitational-constant/
+│   │   │   │   ├── topic-04-acceleration-due-gravity/
+│   │   │   │   ├── topic-05-gravitational-potential-energy/
+│   │   │   │   ├── topic-06-escape-velocity/
+│   │   │   │   ├── topic-07-earth-satellites/
+│   │   │   │   ├── topic-08-energy-orbiting-satellite/
+│   │   │   │   ├── chapter-mixed/
+│   │   │   │   ├── pyq/
+│   │   │   │   └── media/
+│   │   │   ├── chapter-08-mechanical-properties-solids/
+│   │   │   ├── chapter-09-mechanical-properties-fluids/
+│   │   │   ├── chapter-10-thermal-properties-matter/
+│   │   │   ├── chapter-11-thermodynamics/
+│   │   │   ├── chapter-12-kinetic-theory/
+│   │   │   ├── chapter-13-oscillations/
+│   │   │   └── chapter-14-waves/
+│   │   └── subject-media/
+│   │
+│   ├── chemistry/
+│   │   ├── subject-meta.json
+│   │   ├── chapter-index.json
+│   │   ├── chapters/
+│   │   │   ├── chapter-01-basic-concepts-chemistry/
+│   │   │   ├── chapter-02-structure-of-atom/
+│   │   │   ├── chapter-03-classification-periodicity/
+│   │   │   ├── chapter-04-chemical-bonding/
+│   │   │   ├── chapter-05-states-of-matter/
+│   │   │   ├── chapter-06-thermodynamics/
+│   │   │   ├── chapter-07-equilibrium/
+│   │   │   ├── chapter-08-redox-reactions/
+│   │   │   ├── chapter-09-hydrogen/
+│   │   │   ├── chapter-10-s-block-elements/
+│   │   │   ├── chapter-11-p-block-elements/
+│   │   │   ├── chapter-12-organic-chemistry-basics/
+│   │   │   ├── chapter-13-hydrocarbons/
+│   │   │   └── chapter-14-environmental-chemistry/
+│   │   └── subject-media/
+│   │
+│   └── mathematics/
+│       ├── subject-meta.json
+│       ├── chapter-index.json
+│       ├── chapters/
+│       │   ├── chapter-01-sets/
+│       │   ├── chapter-02-relations-functions/
+│       │   ├── chapter-03-trigonometric-functions/
+│       │   ├── chapter-04-complex-numbers/
+│       │   ├── chapter-05-linear-inequalities/
+│       │   ├── chapter-06-permutations-combinations/
+│       │   ├── chapter-07-binomial-theorem/
+│       │   ├── chapter-08-sequences-series/
+│       │   ├── chapter-09-straight-lines/
+│       │   ├── chapter-10-conic-sections/
+│       │   ├── chapter-11-3d-geometry/
+│       │   ├── chapter-12-limits-derivatives/
+│       │   ├── chapter-13-statistics/
+│       │   ├── chapter-14-probability/
+│       │   ├── chapter-15-mathematical-reasoning/
+│       │   └── chapter-16-principle-mathematical-induction/
+│       └── subject-media/
+│
+│
+│ ═══════════════════════════════════════════════════════════
+│  CLASS 12  (NCERT — PCM Only)  — Full structure follows same pattern
+│ ═══════════════════════════════════════════════════════════
+│
+└── class-12/
+    ├── class-meta.json
+    │
+    ├── physics/
+    │   ├── subject-meta.json
+    │   ├── chapter-index.json
+    │   ├── chapters/
+    │   │   ├── chapter-01-electric-charges-fields/
+    │   │   ├── chapter-02-electrostatic-potential-capacitance/
+    │   │   ├── chapter-03-current-electricity/
+    │   │   ├── chapter-04-moving-charges-magnetism/
+    │   │   ├── chapter-05-magnetism-matter/
+    │   │   ├── chapter-06-electromagnetic-induction/
+    │   │   ├── chapter-07-alternating-current/
+    │   │   ├── chapter-08-electromagnetic-waves/
+    │   │   ├── chapter-09-ray-optics/
+    │   │   ├── chapter-10-wave-optics/
+    │   │   ├── chapter-11-dual-nature-radiation-matter/
+    │   │   ├── chapter-12-atoms/
+    │   │   ├── chapter-13-nuclei/
+    │   │   └── chapter-14-semiconductor-electronics/
+    │   └── subject-media/
+    │
+    ├── chemistry/
+    │   ├── subject-meta.json
+    │   ├── chapter-index.json
+    │   ├── chapters/
+    │   │   ├── chapter-01-solutions/
+    │   │   ├── chapter-02-electrochemistry/
+    │   │   ├── chapter-03-chemical-kinetics/
+    │   │   ├── chapter-04-d-f-block-elements/
+    │   │   ├── chapter-05-coordination-compounds/
+    │   │   ├── chapter-06-haloalkanes-haloarenes/
+    │   │   ├── chapter-07-alcohols-phenols-ethers/
+    │   │   ├── chapter-08-aldehydes-ketones-acids/
+    │   │   ├── chapter-09-amines/
+    │   │   └── chapter-10-biomolecules/
+    │   └── subject-media/
+    │
+    └── mathematics/
+        ├── subject-meta.json
+        ├── chapter-index.json
+        ├── chapters/
+        │   ├── chapter-01-relations-functions/
+        │   ├── chapter-02-inverse-trigonometric-functions/
+        │   ├── chapter-03-matrices/
+        │   ├── chapter-04-determinants/
+        │   ├── chapter-05-continuity-differentiability/
+        │   ├── chapter-06-applications-derivatives/
+        │   ├── chapter-07-integrals/
+        │   ├── chapter-08-applications-integrals/
+        │   ├── chapter-09-differential-equations/
+        │   ├── chapter-10-vector-algebra/
+        │   ├── chapter-11-3d-geometry/
+        │   ├── chapter-12-linear-programming/
+        │   └── chapter-13-probability/
+        └── subject-media/

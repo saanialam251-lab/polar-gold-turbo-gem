@@ -1,0 +1,91 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://cbse-practice-app.local/schemas/explanation.schema.json",
+  "title": "CBSE Explanation Schema",
+  "description": "Detailed multi-step explanation for a question. Every explanation is stored separately and linked by explanation_id.",
+  "type": "object",
+  "required": [
+    "explanation_id",
+    "question_id",
+    "steps",
+    "final_answer"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "explanation_id": {
+      "type": "string",
+      "description": "Unique ID of this explanation. Format: QUESTION_ID-EXP",
+      "pattern": "^.+-EXP$"
+    },
+    "question_id": {
+      "type": "string",
+      "description": "The question this explanation belongs to"
+    },
+    "steps": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 12,
+      "description": "Ordered list of solution steps",
+      "items": {
+        "type": "object",
+        "required": ["step", "title", "content"],
+        "additionalProperties": false,
+        "properties": {
+          "step": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "title": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 80
+          },
+          "content": {
+            "type": "string",
+            "minLength": 5
+          },
+          "latex": {
+            "type": ["string", "null"],
+            "description": "Optional LaTeX for this step"
+          },
+          "media": {
+            "type": ["string", "null"],
+            "description": "Optional image filename used in this step"
+          }
+        }
+      }
+    },
+    "final_answer": {
+      "type": "string",
+      "description": "The correct option letter or the numerical value as string"
+    },
+    "related_concepts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Concepts that help understand this question better",
+      "default": []
+    },
+    "common_mistakes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Frequent errors students make on this question",
+      "default": []
+    },
+    "hints": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Optional progressive hints (can be shown one-by-one)",
+      "default": []
+    },
+    "difficulty_note": {
+      "type": ["string", "null"],
+      "description": "Optional note explaining why this question is medium or hard"
+    }
+  }
+}

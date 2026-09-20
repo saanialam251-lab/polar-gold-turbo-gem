@@ -1,0 +1,83 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://cbse-practice-app.local/schemas/chapter.schema.json",
+  "title": "CBSE Chapter Schema",
+  "description": "Metadata for a full chapter.",
+  "type": "object",
+  "required": [
+    "chapter_id",
+    "name",
+    "order",
+    "class",
+    "subject",
+    "topics",
+    "expected_mixed_medium",
+    "expected_mixed_hard"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "chapter_id": {
+      "type": "string",
+      "pattern": "^chapter-[0-9]{2}-[a-z0-9-]+$",
+      "description": "Folder-style chapter identifier"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 3,
+      "description": "Official chapter name from NCERT"
+    },
+    "order": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "class": {
+      "type": "integer",
+      "enum": [9, 10, 11, 12]
+    },
+    "subject": {
+      "type": "string",
+      "enum": ["Physics", "Chemistry", "Mathematics"]
+    },
+    "ncert_book": {
+      "type": ["string", "null"],
+      "description": "Exact NCERT textbook name if relevant"
+    },
+    "description": {
+      "type": ["string", "null"]
+    },
+    "topics": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "pattern": "^topic-[0-9]{2}-[a-z0-9-]+$"
+      },
+      "description": "Ordered list of topic_ids belonging to this chapter"
+    },
+    "expected_mixed_medium": {
+      "type": "integer",
+      "const": 50,
+      "description": "Always 50 mixed medium questions"
+    },
+    "expected_mixed_hard": {
+      "type": "integer",
+      "const": 50,
+      "description": "Always 50 mixed hard questions"
+    },
+    "weightage": {
+      "type": ["number", "null"],
+      "description": "Approximate total marks this chapter carries in board exams"
+    },
+    "prerequisites": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of chapter_ids that should be completed before this chapter"
+    },
+    "syllabus_version": {
+      "type": "string",
+      "description": "e.g. 2026-27 for Class 9 new syllabus"
+    }
+  }
+}

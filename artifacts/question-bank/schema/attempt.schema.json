@@ -1,0 +1,62 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://cbse-practice-app.local/schemas/attempt.schema.json",
+  "title": "CBSE Attempt Schema",
+  "description": "Record of a single student attempt on a single question. This is the core of the question history system.",
+  "type": "object",
+  "required": [
+    "attempt_id",
+    "user_id",
+    "question_id",
+    "selected_option",
+    "is_correct",
+    "attempted_at"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "attempt_id": {
+      "type": "string",
+      "description": "Unique attempt identifier"
+    },
+    "user_id": {
+      "type": "string",
+      "description": "Student identifier"
+    },
+    "question_id": {
+      "type": "string",
+      "description": "The permanent question ID"
+    },
+    "test_id": {
+      "type": ["string", "null"],
+      "description": "If this attempt happened inside a formal test"
+    },
+    "selected_option": {
+      "type": ["string", "null"],
+      "enum": ["A", "B", "C", "D", "E", "F", null],
+      "description": "Option chosen by the student (null if skipped)"
+    },
+    "numerical_response": {
+      "type": ["number", "null"],
+      "description": "For numerical questions"
+    },
+    "is_correct": {
+      "type": "boolean"
+    },
+    "marks_awarded": {
+      "type": "number"
+    },
+    "time_taken_seconds": {
+      "type": ["integer", "null"],
+      "minimum": 0
+    },
+    "attempted_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "status_after": {
+      "type": "string",
+      "enum": ["NEW", "ATTEMPTED", "WRONG", "RETRY", "CORRECT", "MASTERED"],
+      "description": "The mastery status of the question after this attempt"
+    }
+  }
+}

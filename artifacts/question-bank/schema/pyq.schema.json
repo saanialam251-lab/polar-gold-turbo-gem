@@ -1,0 +1,62 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://cbse-practice-app.local/schemas/pyq.schema.json",
+  "title": "CBSE Previous Year Question Schema",
+  "description": "Wrapper for previous year questions. A PYQ entry can reference an existing question_id or contain the full question.",
+  "type": "object",
+  "required": [
+    "pyq_id",
+    "year",
+    "exam",
+    "class",
+    "subject",
+    "chapter_id"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "pyq_id": {
+      "type": "string",
+      "description": "Unique PYQ identifier",
+      "pattern": "^PYQ-[A-Z]{3}(9|10|11|12)-[0-9]{4}-[0-9]{3}$"
+    },
+    "year": {
+      "type": "integer",
+      "minimum": 2000,
+      "maximum": 2030
+    },
+    "exam": {
+      "type": "string",
+      "enum": ["CBSE", "CBSE-Compartment", "CBSE-Sample", "CBSE-Pre-Board"]
+    },
+    "class": {
+      "type": "integer",
+      "enum": [9, 10, 11, 12]
+    },
+    "subject": {
+      "type": "string",
+      "enum": ["Physics", "Chemistry", "Mathematics"]
+    },
+    "chapter_id": {
+      "type": "string",
+      "pattern": "^chapter-[0-9]{2}-[a-z0-9-]+$"
+    },
+    "topic_id": {
+      "type": ["string", "null"],
+      "pattern": "^topic-[0-9]{2}-[a-z0-9-]+$"
+    },
+    "question_id": {
+      "type": ["string", "null"],
+      "description": "If the PYQ is already present in the main bank, link to it"
+    },
+    "set": {
+      "type": ["string", "null"],
+      "description": "Exam set code if available (e.g. Set-1, Set-2)"
+    },
+    "marks": {
+      "type": ["number", "null"]
+    },
+    "notes": {
+      "type": ["string", "null"]
+    }
+  }
+}

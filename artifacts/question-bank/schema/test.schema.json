@@ -1,0 +1,95 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://cbse-practice-app.local/schemas/test.schema.json",
+  "title": "CBSE Test Schema",
+  "description": "A complete test session taken by a student.",
+  "type": "object",
+  "required": [
+    "test_id",
+    "user_id",
+    "class",
+    "subject",
+    "chapter_id",
+    "total_questions",
+    "started_at"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "test_id": {
+      "type": "string",
+      "description": "Unique test identifier"
+    },
+    "user_id": {
+      "type": "string"
+    },
+    "class": {
+      "type": "integer",
+      "enum": [9, 10, 11, 12]
+    },
+    "subject": {
+      "type": "string",
+      "enum": ["Physics", "Chemistry", "Mathematics"]
+    },
+    "chapter_id": {
+      "type": "string",
+      "pattern": "^chapter-[0-9]{2}-[a-z0-9-]+$"
+    },
+    "topic_id": {
+      "type": ["string", "null"],
+      "description": "Null if this is a full-chapter mixed test"
+    },
+    "difficulty": {
+      "type": "string",
+      "enum": ["medium", "hard", "mixed"]
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["practice", "wrong", "pyq", "chapter-mixed", "full-syllabus"],
+      "description": "How the questions were selected"
+    },
+    "total_questions": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "question_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Ordered list of question IDs that appeared in this test"
+    },
+    "attempted": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "correct": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "wrong": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "skipped": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "score": {
+      "type": "number"
+    },
+    "max_score": {
+      "type": "number"
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "completed_at": {
+      "type": ["string", "null"],
+      "format": "date-time"
+    },
+    "time_taken_seconds": {
+      "type": ["integer", "null"]
+    }
+  }
+}

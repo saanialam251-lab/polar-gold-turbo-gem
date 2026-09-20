@@ -1,0 +1,209 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://cbse-practice-app.local/schemas/question.schema.json",
+  "title": "CBSE Question Schema",
+  "description": "Strict schema for every question in the CBSE Practice App question bank. Every question must pass this schema before import.",
+  "type": "object",
+  "required": [
+    "question_id",
+    "class",
+    "subject",
+    "chapter_id",
+    "topic_id",
+    "difficulty",
+    "type",
+    "is_pyq",
+    "marks_correct",
+    "marks_wrong",
+    "question_text",
+    "options",
+    "correct_option",
+    "explanation_id",
+    "concepts"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "question_id": {
+      "type": "string",
+      "description": "Permanent unique ID. Format: SUBJECTCLASS-CHAPTERABBREV-TOPICABBREV-DIFFICULTY-####",
+      "pattern": "^[A-Z]{3}(9|10|11|12)-[A-Z]{3,8}-[A-Z]{3,8}-[MH]-[0-9]{4}$",
+      "examples": [
+        "PHY12-GRAV-ESC-M-0001",
+        "CHE11-BOND-VSEPR-H-0042",
+        "MAT10-QUAD-FORM-M-0015"
+      ]
+    },
+    "class": {
+      "type": "integer",
+      "enum": [9, 10, 11, 12],
+      "description": "Class level"
+    },
+    "subject": {
+      "type": "string",
+      "enum": ["Physics", "Chemistry", "Mathematics"],
+      "description": "Subject name"
+    },
+    "chapter_id": {
+      "type": "string",
+      "description": "Folder-style chapter identifier, e.g. chapter-07-gravitation",
+      "pattern": "^chapter-[0-9]{2}-[a-z0-9-]+$"
+    },
+    "topic_id": {
+      "type": "string",
+      "description": "Folder-style topic identifier, e.g. topic-06-escape-velocity",
+      "pattern": "^topic-[0-9]{2}-[a-z0-9-]+$"
+    },
+    "difficulty": {
+      "type": "string",
+      "enum": ["medium", "hard"],
+      "description": "Only two difficulty levels are allowed"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["MCQ", "Numerical", "Assertion-Reason", "Match-the-Following", "True-False"],
+      "description": "Question type"
+    },
+    "is_pyq": {
+      "type": "boolean",
+      "description": "Whether this question appeared in a previous year board exam"
+    },
+    "pyq_year": {
+      "type": ["integer", "null"],
+      "description": "Year of the board exam if is_pyq is true",
+      "minimum": 2000,
+      "maximum": 2030
+    },
+    "pyq_exam": {
+      "type": ["string", "null"],
+      "enum": ["CBSE", "CBSE-Compartment", "CBSE-Sample", null],
+      "description": "Exam source if is_pyq is true"
+    },
+    "marks_correct": {
+      "type": "number",
+      "description": "Marks awarded for correct answer (usually 4 for MCQ)",
+      "minimum": 0
+    },
+    "marks_wrong": {
+      "type": "number",
+      "description": "Marks deducted for wrong answer (usually -1)",
+      "maximum": 0
+    },
+    "question_text": {
+      "type": "string",
+      "minLength": 10,
+      "description": "The full question text in plain English. May contain simple inline math if needed, but prefer LaTeX field."
+    },
+    "latex": {
+      "type": ["string", "null"],
+      "description": "Optional LaTeX representation of the core equation or expression in the question"
+    },
+    "options": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 6,
+      "description": "Answer options. Required for MCQ and Assertion-Reason.",
+      "items": {
+        "type": "object",
+        "required": ["id", "text"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "enum": ["A", "B", "C", "D", "E", "F"]
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1
+          },
+          "latex": {
+            "type": ["string", "null"]
+          }
+        }
+      }
+    },
+    "correct_option": {
+      "type": "string",
+      "enum": ["A", "B", "C", "D", "E", "F"],
+      "description": "The correct option ID"
+    },
+    "numerical_answer": {
+      "type": ["number", "null"],
+      "description": "For Numerical type questions only. Exact expected value."
+    },
+    "numerical_tolerance": {
+      "type": ["number", "null"],
+      "description": "Allowed absolute tolerance for numerical answers (e.g. 0.1)"
+    },
+    "explanation_id": {
+      "type": "string",
+      "description": "ID of the corresponding explanation object. Format: QUESTION_ID-EXP",
+      "pattern": "^.+-EXP$"
+    },
+    "concepts": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "items": {
+        "type": "string",
+        "minLength": 2
+      },
+      "description": "Key concepts tested by this question"
+    },
+    "formula_used": {
+      "type": ["string", "null"],
+      "description": "Main formula used (in LaTeX)"
+    },
+    "media": {
+      "type": "array",
+      "description": "List of media file names associated with this question",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Optional free-form tags for search and filtering",
+      "default": []
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO timestamp of creation"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO timestamp of last update"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "is_pyq": { "const": true } }
+      },
+      "then": {
+        "required": ["pyq_year", "pyq_exam"]
+      }
+    },
+    {
+      "if": {
+        "properties": { "type": { "const": "Numerical" } }
+      },
+      "then": {
+        "required": ["numerical_answer"]
+      }
+    },
+    {
+      "if": {
+        "properties": { "type": { "const": "MCQ" } }
+      },
+      "then": {
+        "required": ["options", "correct_option"]
+      }
+    }
+  ]
+}

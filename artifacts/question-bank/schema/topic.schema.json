@@ -1,0 +1,92 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://cbse-practice-app.local/schemas/topic.schema.json",
+  "title": "CBSE Topic Schema",
+  "description": "Metadata for a single topic inside a chapter.",
+  "type": "object",
+  "required": [
+    "topic_id",
+    "name",
+    "order",
+    "class",
+    "subject",
+    "chapter_id",
+    "expected_medium",
+    "expected_hard"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "topic_id": {
+      "type": "string",
+      "pattern": "^topic-[0-9]{2}-[a-z0-9-]+$",
+      "description": "Folder-style topic identifier"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 3,
+      "description": "Human-readable topic name"
+    },
+    "order": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Display order inside the chapter"
+    },
+    "class": {
+      "type": "integer",
+      "enum": [9, 10, 11, 12]
+    },
+    "subject": {
+      "type": "string",
+      "enum": ["Physics", "Chemistry", "Mathematics"]
+    },
+    "chapter_id": {
+      "type": "string",
+      "pattern": "^chapter-[0-9]{2}-[a-z0-9-]+$"
+    },
+    "description": {
+      "type": ["string", "null"],
+      "description": "Short description of what this topic covers"
+    },
+    "key_concepts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of core concepts in this topic"
+    },
+    "formulas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "latex"],
+        "properties": {
+          "name": { "type": "string" },
+          "latex": { "type": "string" },
+          "description": { "type": ["string", "null"] }
+        }
+      },
+      "description": "Important formulas belonging to this topic"
+    },
+    "expected_medium": {
+      "type": "integer",
+      "const": 50,
+      "description": "Always 50 medium questions"
+    },
+    "expected_hard": {
+      "type": "integer",
+      "const": 50,
+      "description": "Always 50 hard questions"
+    },
+    "weightage": {
+      "type": ["number", "null"],
+      "description": "Approximate marks weightage in board exams (optional)"
+    },
+    "prerequisites": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of topic_ids that should be studied before this one"
+    }
+  }
+}
