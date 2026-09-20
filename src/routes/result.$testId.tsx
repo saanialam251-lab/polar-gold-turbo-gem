@@ -3,6 +3,8 @@ import { questionById } from "@/lib/questions";
 import { getChapter } from "@/lib/syllabus";
 import { useAppStore } from "@/lib/store";
 import { Shell } from "@/components/shell";
+import { MathText } from "@/components/math";
+import { SUBJECT_WIDE_CHAPTER_ID } from "@/lib/types";
 
 export const Route = createFileRoute("/result/$testId")({ component: ResultPage });
 
@@ -41,7 +43,9 @@ function ResultPage() {
             <li key={id} className="flex items-start gap-3 px-4 py-3">
               <span className="text-xs text-muted tabular-nums">{i + 1}</span>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm">{q.questionText}</p>
+                <p className="truncate text-sm">
+                  <MathText text={q.questionText} />
+                </p>
                 <p className="text-xs text-muted">
                   {ok ? "Correct" : last?.selected ? `Chose ${last.selected} · key ${q.correct}` : "Skipped"}
                 </p>
@@ -51,17 +55,27 @@ function ResultPage() {
         })}
       </ol>
       <div className="mt-6 flex flex-wrap gap-3">
-        <Link
-          to="/class/$classId/$subject/$chapter"
-          params={{
-            classId: String(test.class),
-            subject: test.subject,
-            chapter: test.chapterId,
-          }}
-          className="inline-flex h-11 items-center rounded-md bg-ink px-4 text-sm font-medium text-paper no-underline"
-        >
-          Back to chapter
-        </Link>
+        {test.chapterId === SUBJECT_WIDE_CHAPTER_ID ? (
+          <Link
+            to="/class/$classId/$subject"
+            params={{ classId: String(test.class), subject: test.subject }}
+            className="inline-flex h-11 items-center rounded-md bg-ink px-4 text-sm font-medium text-paper no-underline"
+          >
+            Back to {test.subject}
+          </Link>
+        ) : (
+          <Link
+            to="/class/$classId/$subject/$chapter"
+            params={{
+              classId: String(test.class),
+              subject: test.subject,
+              chapter: test.chapterId,
+            }}
+            className="inline-flex h-11 items-center rounded-md bg-ink px-4 text-sm font-medium text-paper no-underline"
+          >
+            Back to chapter
+          </Link>
+        )}
         <Link
           to="/progress"
           className="inline-flex h-11 items-center rounded-md border border-line px-4 text-sm font-medium text-ink no-underline"
