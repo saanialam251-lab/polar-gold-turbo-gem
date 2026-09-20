@@ -3,7 +3,17 @@ export type Subject = "Physics" | "Chemistry" | "Mathematics";
 export type Difficulty = "medium" | "hard" | "mixed";
 export type OptionId = "A" | "B" | "C" | "D";
 export type MasteryStatus = "NEW" | "WRONG" | "CORRECT" | "MASTERED";
-export type TestMode = "practice" | "wrong" | "pyq" | "chapter-mixed" | "mastered" | "topic";
+export type TestMode =
+  | "practice"
+  | "wrong"
+  | "pyq"
+  | "chapter-mixed"
+  | "mastered"
+  | "topic"
+  | "subject-mixed";
+
+/** Sentinel chapterId used for a subject-wide test session (spans every chapter). */
+export const SUBJECT_WIDE_CHAPTER_ID = "__subject-wide__";
 
 export type Topic = {
   id: string;
