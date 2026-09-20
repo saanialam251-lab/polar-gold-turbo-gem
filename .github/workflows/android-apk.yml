@@ -1,0 +1,146 @@
+name: Build & publish Android APK
+
+# Builds the Orbit web app as a static bundle, wraps it in an Android app
+# (Capacitor) and publishes the APK.
+#
+#   push to main   -> APK attached to the rolling GitHub Release tagged "latest"
+#   push tag v*    -> APK attached to a new GitHub Release for that tag
+#   manual run     -> Actions tab -> "Build & publish Android APK" -> Run workflow
+#
+# Every run also uploads the APK as a workflow artifact (Actions -> the run -> Artifacts).
+#
+# OPTIONAL release signing - add these 4 repository secrets
+# (Settings -> Secrets and variables -> Actions) to get a properly signed APK
+# that can be installed as an update over older versions:
+#   ANDROID_KEYSTORE_BASE64    base64 of your .jks/.keystore file
+#   ANDROID_KEYSTORE_PASSWORD
+#   ANDROID_KEY_ALIAS
+#   ANDROID_KEY_PASSWORD
+# Without them the APK is signed with a temporary debug key: it installs fine,
+# but each build has a different key, so uninstall the old version first.
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write # needed to create the GitHub Release
+
+concurrency:
+  group: android-apk-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  APP_VERSION_CODE: ${{ github.run_number }}
+  APP_VERSION_NAME: 1.0.${{ github.run_number }}
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK platform 36
+        run: sdkmanager "platforms;android-36" "build-tools;36.0.0"
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('android/**/*.gradle', 'android/gradle/wrapper/gradle-wrapper.properties') }}
+          restore-keys: gradle-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build web bundle (static single-page app)
+        run: npm run build:android
+
+      - name: Check web bundle
+        run: test -f dist/client/index.html
+
+      - name: Copy web bundle into the Android project
+        run: npx cap sync android
+
+      - name: Prepare release signing key (optional)
+        id: signing
+        env:
+          KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$KEYSTORE_B64" ]; then
+            echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/release.keystore"
+            echo "ANDROID_KEYSTORE_PATH=$RUNNER_TEMP/release.keystore" >> "$GITHUB_ENV"
+            echo "signed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "signed=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::No signing secrets found - building a debug-signed APK."
+          fi
+
+      - name: Build APK
+        working-directory: android
+        env:
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          chmod +x gradlew
+          if [ "${{ steps.signing.outputs.signed }}" = "true" ]; then
+            ./gradlew --no-daemon assembleRelease
+          else
+            ./gradlew --no-daemon assembleDebug
+          fi
+
+      - name: Name the APK
+        run: |
+          if [ "${{ steps.signing.outputs.signed }}" = "true" ]; then
+            SRC=android/app/build/outputs/apk/release/app-release.apk
+          else
+            SRC=android/app/build/outputs/apk/debug/app-debug.apk
+          fi
+          mkdir -p out
+          cp "$SRC" "out/Orbit-${APP_VERSION_NAME}.apk"
+          ls -lh out
+
+      - name: Upload APK as workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Orbit-apk
+          path: out/*.apk
+          if-no-files-found: error
+
+      - name: Publish GitHub Release
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          APK="out/Orbit-${APP_VERSION_NAME}.apk"
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            gh release create "$GITHUB_REF_NAME" "$APK" \
+              --title "Orbit $GITHUB_REF_NAME" --generate-notes
+          else
+            # Rolling release: replace the previous "latest" so it always holds the newest APK.
+            gh release delete latest --cleanup-tag --yes || true
+            gh release create latest "$APK" \
+              --target "$GITHUB_SHA" \
+              --title "Orbit - latest build (#${{ github.run_number }})" \
+              --notes "Automatic APK build of commit ${GITHUB_SHA::7}. Download the .apk below and open it on your Android phone."
+          fi
+          echo "APK published: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/releases" >> "$GITHUB_STEP_SUMMARY"
