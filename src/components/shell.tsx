@@ -1,6 +1,28 @@
 import { Link } from "@tanstack/react-router";
 import { Orbit, BarChart3, Home } from "lucide-react";
 import type { ReactNode } from "react";
+import { useCurrentUserState } from "@/lib/auth/use-current-user";
+import { UserButton } from "@/lib/auth/gates";
+
+/**
+ * Same-sized slot whichever auth state we're in, so the header never jumps
+ * around as the session resolves (see the auth skill's session-ui rules).
+ */
+function AuthSlot() {
+  const { user, isPending } = useCurrentUserState();
+  if (isPending) {
+    return <div className="h-8 w-16 animate-pulse rounded-full bg-paper-2" />;
+  }
+  if (user) return <UserButton />;
+  return (
+    <Link
+      to="/login"
+      className="inline-flex h-9 items-center rounded-full border border-line px-3 text-xs font-medium text-ink no-underline hover:bg-paper-2"
+    >
+      Log in
+    </Link>
+  );
+}
 
 export function Shell({
   children,
@@ -38,6 +60,9 @@ export function Shell({
               <BarChart3 className="size-4" />
               <span className="hidden sm:inline">Progress</span>
             </Link>
+            <span className="ml-1 border-l border-line/80 pl-2">
+              <AuthSlot />
+            </span>
           </nav>
         </div>
       </header>
