@@ -5,7 +5,7 @@ import { questionById } from "@/lib/questions";
 import { getChapter } from "@/lib/syllabus";
 import { useAppStore } from "@/lib/store";
 import { Button } from "@/components/ui/button";
-import { MathTex } from "@/components/math";
+import { MathTex, MathText } from "@/components/math";
 import { Shell } from "@/components/shell";
 import type { OptionId } from "@/lib/types";
 
@@ -104,7 +104,9 @@ function PracticePage() {
             </button>
           </div>
 
-          <h2 className="mt-4 font-display text-2xl leading-snug tracking-tight">{q.questionText}</h2>
+          <h2 className="mt-4 font-display text-2xl leading-snug tracking-tight">
+            <MathText text={q.questionText} />
+          </h2>
           {q.latex ? (
             <div className="mt-3 overflow-x-auto rounded-md border border-line bg-paper-2 px-4 py-3">
               <MathTex tex={q.latex} display />
@@ -135,7 +137,10 @@ function PracticePage() {
                   <span className="grid size-7 shrink-0 place-items-center rounded-full border border-line text-xs font-medium">
                     {opt.id}
                   </span>
-                  <span className="pt-0.5 text-sm leading-relaxed">{opt.text}</span>
+                  <span className="pt-0.5 text-sm leading-relaxed">
+                    <MathText text={opt.text} />
+                    {opt.latex ? <MathTex tex={opt.latex} className="mt-1" /> : null}
+                  </span>
                 </button>
               );
             })}
@@ -170,7 +175,9 @@ function PracticePage() {
                     <p className="text-sm font-medium">
                       {i + 1}. {step.title}
                     </p>
-                    <p className="text-sm leading-relaxed text-muted">{step.content}</p>
+                    <p className="text-sm leading-relaxed text-muted">
+                      <MathText text={step.content} />
+                    </p>
                     {step.latex ? (
                       <div className="mt-1">
                         <MathTex tex={step.latex} display />
@@ -184,7 +191,9 @@ function PracticePage() {
                   <p className="font-medium">Common mistakes</p>
                   <ul className="mt-1 list-disc pl-4 text-muted">
                     {q.commonMistakes.map((m) => (
-                      <li key={m}>{m}</li>
+                      <li key={m}>
+                        <MathText text={m} />
+                      </li>
                     ))}
                   </ul>
                 </div>
