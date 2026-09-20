@@ -2,10 +2,11 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { CLASSES, CLASS_META, SUBJECTS, SYLLABUS } from "@/lib/syllabus";
 import { QUESTIONS } from "@/lib/questions";
-import { chapterStats, overallStats } from "@/lib/engine";
+import { chapterStats, classStats, overallStats } from "@/lib/engine";
 import { useAppStore } from "@/lib/store";
 import { Shell } from "@/components/shell";
 import { Button } from "@/components/ui/button";
+import type { ClassId } from "@/lib/types";
 
 export const Route = createFileRoute("/progress")({ component: ProgressPage });
 
@@ -14,15 +15,18 @@ function ProgressPage() {
   const setProfile = useAppStore((s) => s.setProfile);
   const states = useAppStore((s) => s.states);
   const tests = useAppStore((s) => s.tests);
-  const reset = useAppStore((s) => s.resetProgress);
   const stats = overallStats(states, tests);
   const mastered = Object.values(states).filter((s) => s.status === "MASTERED").length;
   const inWrongPool = Object.values(states).filter((s) => s.status === "WRONG").length;
   const [confirming, setConfirming] = useState(false);
   const [resetDone, setResetDone] = useState(false);
+  const [activeClass, setActiveClass] = useState<ClassId>(profile.classId);
 
+  // Subject breakdown scoped to activeClass only — a Class 9 Physics attempt
+  // must never blend into the Class 11 Physics number, and vice versa, so
+  // every question is filtered by BOTH class and subject before counting.
   const bySubject = SUBJECTS.map((subject) => {
-    const qs = QUESTIONS.filter((q) => q.subject === subject);
+    const qs = QUESTIONS.filter((q) => q.class === activeClass && q.subject === subject);
     let ok = 0;
     let w = 0;
     for (const q of qs) {
@@ -34,6 +38,8 @@ function ProgressPage() {
     const den = ok + w;
     return { subject, pct: den ? Math.round((ok / den) * 100) : 0, ok, w };
   });
+  const activeClassStats = classStats(activeClass, states, tests);
+  const classTests = tests.filter((t) => t.class === activeClass);
 
   return (
     <Shell eyebrow="Analytics" title="Progress">
@@ -62,7 +68,10 @@ function ProgressPage() {
         </label>
       </div>
 
-      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
+      <p className="mt-8 text-xs uppercase tracking-[0.16em] text-muted">
+        All classes combined
+      </p>
+      <div className="mt-2 grid grid-cols-2 gap-3 sm:grid-cols-3">
         <Tile k="Attempted" v={String(stats.solved)} />
         <Tile k="Last-answer correct" v={String(stats.correct)} />
         <Tile k="Last-answer wrong" v={String(stats.wrong)} />
@@ -71,7 +80,37 @@ function ProgressPage() {
         <Tile k="In wrong pool" v={String(inWrongPool)} />
       </div>
 
-      <h2 className="mt-10 font-display text-xl">By subject</h2>
+      <div className="mt-10 flex items-center justify-between">
+        <h2 className="font-display text-xl">Class analytics</h2>
+        <div className="flex gap-1.5 rounded-full border border-line bg-paper-2 p-1">
+          {CLASSES.map((c) => (
+            <button
+              key={c}
+              type="button"
+              onClick={() => setActiveClass(c)}
+              className={`h-8 rounded-full px-3 text-xs font-medium tabular-nums ${
+                activeClass === c ? "bg-ink text-paper" : "text-ink/70"
+              }`}
+            >
+              Class {c}
+            </button>
+          ))}
+        </div>
+      </div>
+      <p className="mt-1 text-xs text-muted">
+        Class {activeClass} only — attempts from other classes are never mixed in here.
+      </p>
+
+      <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+        <Tile k="Attempted" v={String(activeClassStats.solved)} />
+        <Tile k="Accuracy" v={`${activeClassStats.accuracy}%`} />
+        <Tile k="Tests logged" v={String(activeClassStats.tests)} />
+        <Tile k="Correct" v={String(activeClassStats.correct)} />
+        <Tile k="Mastered" v={String(activeClassStats.mastered)} />
+        <Tile k="In wrong pool" v={String(activeClassStats.inWrongPool)} />
+      </div>
+
+      <h3 className="mt-6 font-display text-lg">By subject · Class {activeClass}</h3>
       <ul className="mt-3 space-y-3">
         {bySubject.map((s) => (
           <li key={s.subject}>
@@ -88,12 +127,12 @@ function ProgressPage() {
         ))}
       </ul>
 
-      <h2 className="mt-10 font-display text-xl">Recent tests</h2>
-      {tests.length === 0 ? (
-        <p className="mt-2 text-sm text-muted">No tests yet.</p>
+      <h3 className="mt-8 font-display text-lg">Recent tests · Class {activeClass}</h3>
+      {classTests.length === 0 ? (
+        <p className="mt-2 text-sm text-muted">No tests yet for Class {activeClass}.</p>
       ) : (
         <ul className="mt-3 divide-y divide-line rounded-lg border border-line">
-          {tests.slice(0, 12).map((t) => {
+          {classTests.slice(0, 12).map((t) => {
             const ch = SYLLABUS[t.class][t.subject].find((c) => c.id === t.chapterId);
             return (
               <li key={t.id}>
@@ -141,28 +180,14 @@ function ProgressPage() {
 
       <div className="mt-10">
         {confirming ? (
-          <div className="rounded-lg border border-danger/40 bg-paper p-4">
-            <p className="text-sm">
-              Reset all progress on this device? This clears {stats.solved} attempted
-              questions, {stats.tests} tests, mastered / wrong pools and your bookmarks. Your
-              name and default class are kept.
-            </p>
-            <div className="mt-3 flex flex-wrap gap-2">
-              <Button
-                variant="danger"
-                onClick={() => {
-                  reset();
-                  setConfirming(false);
-                  setResetDone(true);
-                }}
-              >
-                Yes, reset everything
-              </Button>
-              <Button variant="outline" onClick={() => setConfirming(false)}>
-                Cancel
-              </Button>
-            </div>
-          </div>
+          <ResetPanel
+            activeClass={activeClass}
+            onCancel={() => setConfirming(false)}
+            onDone={() => {
+              setConfirming(false);
+              setResetDone(true);
+            }}
+          />
         ) : (
           <Button
             variant="outline"
@@ -171,16 +196,116 @@ function ProgressPage() {
               setConfirming(true);
             }}
           >
-            Reset local progress
+            Reset progress…
           </Button>
         )}
         {resetDone ? (
           <p role="status" className="mt-3 text-sm text-sage">
-            Progress reset. All counts are back to zero.
+            Done. The counts above reflect it immediately.
           </p>
         ) : null}
       </div>
     </Shell>
+  );
+}
+
+function ResetPanel({
+  activeClass,
+  onCancel,
+  onDone,
+}: {
+  activeClass: ClassId;
+  onCancel: () => void;
+  onDone: () => void;
+}) {
+  const reset = useAppStore((s) => s.resetProgress);
+  const [scope, setScope] = useState<"all" | "class">("class");
+  const [clearStates, setClearStates] = useState(true);
+  const [clearTests, setClearTests] = useState(true);
+  const [clearBookmarks, setClearBookmarks] = useState(false);
+
+  const nothingPicked = !clearStates && !clearTests && !clearBookmarks;
+
+  return (
+    <div className="rounded-lg border border-danger/40 bg-paper p-4">
+      <p className="text-sm font-medium">What do you want to clear?</p>
+
+      <div className="mt-3 flex gap-2">
+        <button
+          type="button"
+          onClick={() => setScope("class")}
+          className={`h-9 rounded-full px-3 text-xs ${
+            scope === "class" ? "bg-ink text-paper" : "bg-paper-2 text-ink"
+          }`}
+        >
+          Class {activeClass} only
+        </button>
+        <button
+          type="button"
+          onClick={() => setScope("all")}
+          className={`h-9 rounded-full px-3 text-xs ${
+            scope === "all" ? "bg-ink text-paper" : "bg-paper-2 text-ink"
+          }`}
+        >
+          All classes
+        </button>
+      </div>
+
+      <div className="mt-4 space-y-2 text-sm">
+        <label className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={clearStates}
+            onChange={(e) => setClearStates(e.target.checked)}
+            className="size-4 accent-copper"
+          />
+          Question progress — mastered / wrong / correct pools
+        </label>
+        <label className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={clearTests}
+            onChange={(e) => setClearTests(e.target.checked)}
+            className="size-4 accent-copper"
+          />
+          Test history — every completed test record
+        </label>
+        <label className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={clearBookmarks}
+            onChange={(e) => setClearBookmarks(e.target.checked)}
+            className="size-4 accent-copper"
+          />
+          Bookmarks
+        </label>
+      </div>
+
+      <p className="mt-3 text-xs text-muted">
+        Your name, default class, and account login are never touched by this.
+      </p>
+
+      <div className="mt-3 flex flex-wrap gap-2">
+        <Button
+          variant="danger"
+          disabled={nothingPicked}
+          onClick={() => {
+            reset({
+              classId: scope === "class" ? activeClass : undefined,
+              states: clearStates,
+              tests: clearTests,
+              bookmarks: clearBookmarks,
+            });
+            onDone();
+          }}
+        >
+          Clear selected
+        </Button>
+        <Button variant="outline" onClick={onCancel}>
+          Cancel
+        </Button>
+      </div>
+    </div>
   );
 }
 
@@ -191,4 +316,4 @@ function Tile({ k, v }: { k: string; v: string }) {
       <p className="mt-1 font-display text-2xl tabular-nums">{v}</p>
     </div>
   );
-}
+      }
