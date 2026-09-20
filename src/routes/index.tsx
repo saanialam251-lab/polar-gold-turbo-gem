@@ -46,17 +46,7 @@ function Home() {
               Continue Class {profile.classId}
               <ArrowRight className="size-4" />
             </Link>
-            <Link
-              to="/class/$classId/$subject/$chapter"
-              params={{
-                classId: "11",
-                subject: "Physics",
-                chapter: "chapter-07-gravitation",
-              }}
-              className="inline-flex h-11 min-h-11 items-center gap-2 rounded-md border border-line bg-paper px-4 text-sm font-medium text-ink no-underline"
-            >
-              Open Gravitation (full bank)
-            </Link>
+            
           </div>
         </div>
         <aside className="rounded-lg border border-line bg-ink p-5 text-paper">
