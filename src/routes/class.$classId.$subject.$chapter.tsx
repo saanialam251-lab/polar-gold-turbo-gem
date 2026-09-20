@@ -1,11 +1,12 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getChapter } from "@/lib/syllabus";
 import { questionsFor } from "@/lib/questions";
-import { chapterStats, poolFor, selectQuestions } from "@/lib/engine";
+import { chapterStats, MAX_TEST_QUESTIONS, poolFor, selectQuestions } from "@/lib/engine";
 import { useAppStore } from "@/lib/store";
 import { Shell } from "@/components/shell";
 import { Button } from "@/components/ui/button";
+import { MathText } from "@/components/math";
 import type { ClassId, Difficulty, Subject, TestMode } from "@/lib/types";
 
 export const Route = createFileRoute("/class/$classId/$subject/$chapter")({
@@ -28,9 +29,28 @@ function ChapterPage() {
 
   const [mode, setMode] = useState<TestMode>("practice");
   const [difficulty, setDifficulty] = useState<Difficulty>("mixed");
+  const [multiSelect, setMultiSelect] = useState(false);
+  const [topicIds, setTopicIds] = useState<string[]>([]);
   const [count, setCount] = useState(10);
-  const [topicId, setTopicId] = useState<string>("");
   const [msg, setMsg] = useState<string | null>(null);
+
+  const topicId = topicIds.length === 1 ? topicIds[0] : "";
+
+  function toggleTopic(id: string) {
+    setMsg(null);
+    if (multiSelect) {
+      setTopicIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+    } else {
+      setTopicIds((prev) => (prev.length === 1 && prev[0] === id ? [] : [id]));
+    }
+  }
+
+  function toggleMultiSelect() {
+    setMultiSelect((m) => !m);
+    // Switching from multi (0/2+ topics) back to single with an ambiguous
+    // selection would be confusing, so clear it and fall back to "mixed".
+    setTopicIds((prev) => (prev.length > 1 ? [] : prev));
+  }
 
   const wrongByTopic = useMemo(() => {
     const map = new Map<string, number>();
@@ -44,13 +64,33 @@ function ChapterPage() {
 
   // Counts for the mode buttons follow the topic filter, so what the button says
   // is exactly what you get when you press Begin.
-  const scoped = topicId ? qs.filter((q) => q.topicId === topicId) : qs;
+  const scoped = topicIds.length > 0 ? qs.filter((q) => topicIds.includes(q.topicId)) : qs;
   const modeCounts = {
     wrong: scoped.filter((q) => (states[q.id]?.status ?? "NEW") === "WRONG").length,
     pyq: scoped.filter((q) => q.isPyq).length,
     mastered: scoped.filter((q) => states[q.id]?.status === "MASTERED").length,
   };
   const masteredList = qs.filter((q) => states[q.id]?.status === "MASTERED");
+
+  // Live "how many can I actually get" for the current mode/difficulty/topic
+  // combination — this is the number the Begin button will honour, so the
+  // count input's min/max are derived straight from it rather than guessed.
+  const effectiveModeForCount: TestMode = topicIds.length > 0 && mode === "practice" ? "topic" : mode;
+  const availablePool = poolFor({
+    classId,
+    subject,
+    chapterId: chapter,
+    topicIds,
+    mode: effectiveModeForCount,
+    difficulty,
+    states,
+  });
+  const available = availablePool.length;
+  const maxCount = Math.max(1, Math.min(available, MAX_TEST_QUESTIONS));
+
+  useEffect(() => {
+    setCount((c) => Math.min(Math.max(c, 1), maxCount));
+  }, [maxCount]);
 
   if (!ch) {
     return (
@@ -63,20 +103,21 @@ function ChapterPage() {
   function launch() {
     setMsg(null);
     // A topic filter only relabels plain practice; Wrong / PYQ / Mastered keep their mode
-    // (the pool already narrows to the topic through topicId).
-    const effectiveMode: TestMode = topicId && mode === "practice" ? "topic" : mode;
+    // (the pool already narrows to the topic through topicIds).
+    const effectiveMode: TestMode = topicIds.length > 0 && mode === "practice" ? "topic" : mode;
     const pool = poolFor({
       classId,
       subject,
       chapterId: chapter,
-      topicId: topicId || undefined,
+      topicIds,
       mode: effectiveMode,
       difficulty,
       states,
     });
-    const { selected } = selectQuestions(pool, states, count, effectiveMode);
+    const wanted = Math.min(count, pool.length, MAX_TEST_QUESTIONS);
+    const { selected } = selectQuestions(pool, states, wanted, effectiveMode);
     if (selected.length === 0) {
-      setMsg(emptyMessage(effectiveMode, Boolean(topicId)));
+      setMsg(emptyMessage(effectiveMode, topicIds.length > 0));
       return;
     }
     startTest({
@@ -112,8 +153,34 @@ function ChapterPage() {
             <Metric label="Mastered" value={st.mastered} accent="sage" />
           </div>
 
-          <h2 className="mt-8 font-display text-xl">Topics</h2>
+          <div className="mt-8 flex items-center justify-between">
+            <h2 className="font-display text-xl">Topics</h2>
+            <label className="flex items-center gap-2 text-xs text-muted">
+              <input
+                type="checkbox"
+                checked={multiSelect}
+                onChange={toggleMultiSelect}
+                className="size-3.5 accent-copper"
+              />
+              Select multiple topics
+            </label>
+          </div>
           <ul className="mt-3 divide-y divide-line rounded-lg border border-line">
+            <li>
+              <button
+                type="button"
+                onClick={() => {
+                  setMsg(null);
+                  setTopicIds([]);
+                }}
+                className={`flex w-full items-center justify-between px-3 py-3 text-left text-sm ${
+                  topicIds.length === 0 ? "bg-paper-2" : "bg-paper"
+                }`}
+              >
+                <span className="font-medium">Mixed · any topic</span>
+                <span className="text-xs text-muted tabular-nums">{qs.length} q</span>
+              </button>
+            </li>
             {ch.topics.map((t) => {
               const n = qs.filter((q) => q.topicId === t.id).length;
               const w = qs.filter(
@@ -122,18 +189,30 @@ function ChapterPage() {
               const m = qs.filter(
                 (q) => q.topicId === t.id && states[q.id]?.status === "MASTERED",
               ).length;
+              const checked = topicIds.includes(t.id);
               return (
                 <li key={t.id}>
                   <button
                     type="button"
-                    onClick={() => setTopicId(topicId === t.id ? "" : t.id)}
+                    onClick={() => toggleTopic(t.id)}
                     className={`flex w-full items-center justify-between px-3 py-3 text-left text-sm ${
-                      topicId === t.id ? "bg-paper-2" : "bg-paper"
+                      checked ? "bg-paper-2" : "bg-paper"
                     }`}
                   >
-                    <span>
-                      <span className="mr-2 text-muted">{String(t.order).padStart(2, "0")}</span>
-                      {t.name}
+                    <span className="flex items-center gap-2">
+                      {multiSelect ? (
+                        <span
+                          className={`grid size-4 shrink-0 place-items-center rounded border text-[10px] ${
+                            checked ? "border-copper bg-copper text-ink" : "border-line"
+                          }`}
+                        >
+                          {checked ? "✓" : ""}
+                        </span>
+                      ) : null}
+                      <span>
+                        <span className="mr-2 text-muted">{String(t.order).padStart(2, "0")}</span>
+                        {t.name}
+                      </span>
                     </span>
                     <span className="text-xs text-muted tabular-nums">
                       {n} q{w ? ` · ${w} wrong` : ""}
@@ -194,24 +273,52 @@ function ChapterPage() {
                   </button>
                 ))}
               </div>
-              <label className="mt-4 block text-xs text-copper-2">Questions</label>
-              <div className="mt-2 flex gap-2">
-                {[5, 10, 15, 20].map((n) => (
-                  <button
-                    key={n}
-                    type="button"
-                    onClick={() => setCount(n)}
-                    className={`h-9 min-w-11 rounded-full px-3 text-xs tabular-nums ${
-                      count === n ? "bg-copper text-ink" : "bg-ink-soft text-paper"
-                    }`}
-                  >
-                    {n}
-                  </button>
-                ))}
+              <label className="mt-4 block text-xs text-copper-2">
+                Questions · {available} available (max {maxCount})
+              </label>
+              <div className="mt-2 flex items-center gap-3">
+                <input
+                  type="range"
+                  min={1}
+                  max={maxCount}
+                  value={Math.min(count, maxCount)}
+                  onChange={(e) => setCount(Number(e.target.value))}
+                  className="h-2 flex-1 accent-copper"
+                  disabled={maxCount <= 1}
+                />
+                <input
+                  type="number"
+                  min={1}
+                  max={maxCount}
+                  value={Math.min(count, maxCount)}
+                  onChange={(e) =>
+                    setCount(Math.min(maxCount, Math.max(1, Number(e.target.value) || 1)))
+                  }
+                  className="h-9 w-16 rounded-md border border-line/60 bg-ink-soft px-2 text-center text-sm text-paper tabular-nums"
+                />
               </div>
-              {topicId ? (
+              <div className="mt-2 flex gap-2">
+                {[5, 10, 20, maxCount]
+                  .filter((n, i, arr) => n >= 1 && n <= maxCount && arr.indexOf(n) === i)
+                  .map((n) => (
+                    <button
+                      key={n}
+                      type="button"
+                      onClick={() => setCount(n)}
+                      className={`h-8 min-w-10 rounded-full px-2.5 text-xs tabular-nums ${
+                        count === n ? "bg-copper text-ink" : "bg-ink-soft text-paper"
+                      }`}
+                    >
+                      {n === maxCount ? `Max (${n})` : n}
+                    </button>
+                  ))}
+              </div>
+              {topicIds.length > 0 ? (
                 <p className="mt-3 text-xs text-copper-2">
-                  Topic filter on. Tap the topic again to clear.
+                  {topicIds.length === 1
+                    ? "1 topic selected. Tap it again to clear."
+                    : `${topicIds.length} topics selected (mixed across them).`}{" "}
+                  Tap "Mixed · any topic" to clear.
                 </p>
               ) : null}
               <Button variant="copper" className="mt-5 w-full" onClick={launch}>
@@ -258,7 +365,9 @@ function ChapterPage() {
           <ul className="mt-3 divide-y divide-line rounded-lg border border-line">
             {masteredList.map((q) => (
               <li key={q.id} className="px-3 py-2.5 text-sm">
-                <p className="line-clamp-2">{q.questionText}</p>
+                <p className="line-clamp-2">
+                  <MathText text={q.questionText} />
+                </p>
                 <p className="mt-0.5 text-xs text-muted">
                   {ch.topics.find((t) => t.id === q.topicId)?.name ?? q.topicId}
                 </p>
@@ -329,4 +438,4 @@ function Metric({
       </p>
     </div>
   );
-}
+      }
