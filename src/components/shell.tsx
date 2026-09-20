@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Orbit, BarChart3, Home } from "lucide-react";
 import type { ReactNode } from "react";
-import { useCurrentUserState } from "@/lib/auth/use-current-user";
+import { useAppUser } from "@/lib/app-user";
 import { AccountMenu } from "@/components/account-menu";
 
 /**
@@ -9,7 +9,7 @@ import { AccountMenu } from "@/components/account-menu";
  * around as the session resolves (see the auth skill's session-ui rules).
  */
 function AuthSlot() {
-  const { user, isPending } = useCurrentUserState();
+  const { user, isPending } = useAppUser();
   if (isPending) {
     return <div className="h-8 w-16 animate-pulse rounded-full bg-paper-2" />;
   }
