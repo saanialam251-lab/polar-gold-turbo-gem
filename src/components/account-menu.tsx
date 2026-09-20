@@ -2,7 +2,9 @@ import { ChevronDown, LogOut } from "lucide-react";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { signOut } from "@/lib/auth/client";
 import { hasGateSessionMarker } from "@/lib/auth/gate-session-marker";
-import { useCurrentUser } from "@/lib/auth/use-current-user";
+import { useNavigate } from "@tanstack/react-router";
+import { useAppUser } from "@/lib/app-user";
+import { isLocalAuth, localSignOut } from "@/lib/local-auth/local-auth";
 
 const subscribeToNothing = () => () => {};
 const noGateSessionOnServer = () => false;
@@ -13,7 +15,8 @@ const noGateSessionOnServer = () => false;
  * menu with "Log out". Logging out lands on the login page.
  */
 export function AccountMenu() {
-  const user = useCurrentUser();
+  const { user } = useAppUser();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
   const [failed, setFailed] = useState(false);
@@ -43,7 +46,7 @@ export function AccountMenu() {
   }, [open]);
 
   if (!user) return null;
-  const name = user.displayName ?? user.primaryEmail ?? "Account";
+  const name = user.name;
 
   return (
     <div ref={rootRef} className="relative">
@@ -68,8 +71,8 @@ export function AccountMenu() {
         >
           <div className="px-3 py-2">
             <p className="truncate text-sm font-medium text-ink">{name}</p>
-            {user.primaryEmail && user.primaryEmail !== name ? (
-              <p className="truncate text-xs text-muted">{user.primaryEmail}</p>
+            {user.email && user.email !== name ? (
+              <p className="truncate text-xs text-muted">{user.email}</p>
             ) : null}
           </div>
           {/* Gate sessions ("Sign in with Grok") re-sign-in on the next request, so no log out there. */}
@@ -81,6 +84,13 @@ export function AccountMenu() {
                 role="menuitem"
                 disabled={signingOut}
                 onClick={() => {
+                  if (isLocalAuth()) {
+                    // Android app: accounts live on the phone, nothing to ask a server.
+                    localSignOut();
+                    setOpen(false);
+                    void navigate({ to: "/login" });
+                    return;
+                  }
                   setSigningOut(true);
                   setFailed(false);
                   // Success leaves the page; on failure let the user try again.
@@ -103,4 +113,4 @@ export function AccountMenu() {
       ) : null}
     </div>
   );
-          }
+    }
