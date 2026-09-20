@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, BookOpen, FlaskConical, Sigma } from "lucide-react";
+import { BookOpen, FlaskConical, Sigma } from "lucide-react";
 import { CLASSES, CLASS_META, SUBJECTS, SYLLABUS } from "@/lib/syllabus";
 import { QUESTIONS } from "@/lib/questions";
 import { overallStats } from "@/lib/engine";
@@ -37,17 +37,6 @@ function Home() {
             dedicated pool, and mastered items stay out of ordinary tests until you call
             them back.
           </p>
-          <div className="mt-6 flex flex-wrap gap-3">
-            <Link
-              to="/class/$classId"
-              params={{ classId: String(profile.classId) }}
-              className="inline-flex h-11 min-h-11 items-center gap-2 rounded-md bg-ink px-4 text-sm font-medium text-paper no-underline"
-            >
-              Continue Class {profile.classId}
-              <ArrowRight className="size-4" />
-            </Link>
-            
-          </div>
         </div>
         <aside className="rounded-lg border border-line bg-ink p-5 text-paper">
           <p className="text-xs uppercase tracking-[0.16em] text-copper-2">Your desk</p>
