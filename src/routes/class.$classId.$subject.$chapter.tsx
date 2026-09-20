@@ -42,6 +42,16 @@ function ChapterPage() {
     return [...map.entries()].sort((a, b) => b[1] - a[1]);
   }, [qs, states]);
 
+  // Counts for the mode buttons follow the topic filter, so what the button says
+  // is exactly what you get when you press Begin.
+  const scoped = topicId ? qs.filter((q) => q.topicId === topicId) : qs;
+  const modeCounts = {
+    wrong: scoped.filter((q) => (states[q.id]?.status ?? "NEW") === "WRONG").length,
+    pyq: scoped.filter((q) => q.isPyq).length,
+    mastered: scoped.filter((q) => states[q.id]?.status === "MASTERED").length,
+  };
+  const masteredList = qs.filter((q) => states[q.id]?.status === "MASTERED");
+
   if (!ch) {
     return (
       <Shell title="Chapter missing">
@@ -52,22 +62,21 @@ function ChapterPage() {
 
   function launch() {
     setMsg(null);
+    // A topic filter only relabels plain practice; Wrong / PYQ / Mastered keep their mode
+    // (the pool already narrows to the topic through topicId).
+    const effectiveMode: TestMode = topicId && mode === "practice" ? "topic" : mode;
     const pool = poolFor({
       classId,
       subject,
       chapterId: chapter,
       topicId: topicId || undefined,
-      mode: topicId ? "topic" : mode,
+      mode: effectiveMode,
       difficulty,
       states,
     });
-    const { selected, exhausted, remaining } = selectQuestions(pool, states, count, mode);
-    if (exhausted || selected.length === 0) {
-      setMsg(
-        remaining === 0
-          ? "No eligible questions left in this pool. Add more, practise wrongs, or review mastered items."
-          : "Could not build a test from the current filters.",
-      );
+    const { selected } = selectQuestions(pool, states, count, effectiveMode);
+    if (selected.length === 0) {
+      setMsg(emptyMessage(effectiveMode, Boolean(topicId)));
       return;
     }
     startTest({
@@ -76,7 +85,7 @@ function ChapterPage() {
       subject,
       chapterId: chapter,
       topicId: topicId || undefined,
-      mode: topicId ? "topic" : mode,
+      mode: effectiveMode,
       difficulty,
       questionIds: selected.map((q) => q.id),
       answers: {},
@@ -107,9 +116,12 @@ function ChapterPage() {
           <ul className="mt-3 divide-y divide-line rounded-lg border border-line">
             {ch.topics.map((t) => {
               const n = qs.filter((q) => q.topicId === t.id).length;
-              const w = states
-                ? qs.filter((q) => q.topicId === t.id && states[q.id]?.status === "WRONG").length
-                : 0;
+              const w = qs.filter(
+                (q) => q.topicId === t.id && states[q.id]?.status === "WRONG",
+              ).length;
+              const m = qs.filter(
+                (q) => q.topicId === t.id && states[q.id]?.status === "MASTERED",
+              ).length;
               return (
                 <li key={t.id}>
                   <button
@@ -125,6 +137,7 @@ function ChapterPage() {
                     </span>
                     <span className="text-xs text-muted tabular-nums">
                       {n} q{w ? ` · ${w} wrong` : ""}
+                      {m ? ` · ${m} mastered` : ""}
                     </span>
                   </button>
                 </li>
@@ -146,13 +159,13 @@ function ChapterPage() {
               <div className="mt-2 flex flex-wrap gap-2">
                 {(
                   [
-                    ["practice", "Practice"],
-                    ["chapter-mixed", "Mixed"],
-                    ["wrong", "Wrong"],
-                    ["pyq", "PYQ"],
-                    ["mastered", "Mastered"],
+                    ["practice", "Practice", null],
+                    ["chapter-mixed", "Mixed", null],
+                    ["wrong", "Wrong", modeCounts.wrong],
+                    ["pyq", "PYQ", modeCounts.pyq],
+                    ["mastered", "Mastered", modeCounts.mastered],
                   ] as const
-                ).map(([id, label]) => (
+                ).map(([id, label, n]) => (
                   <button
                     key={id}
                     type="button"
@@ -162,6 +175,7 @@ function ChapterPage() {
                     }`}
                   >
                     {label}
+                    {n === null ? "" : ` · ${n}`}
                   </button>
                 ))}
               </div>
@@ -235,6 +249,25 @@ function ChapterPage() {
         </section>
       ) : null}
 
+      {masteredList.length > 0 ? (
+        <section className="mt-10">
+          <h2 className="font-display text-xl">Mastered questions ({masteredList.length})</h2>
+          <p className="mt-1 text-sm text-muted">
+            Answered correctly twice in a row. Pick the Mastered mode above to revise them.
+          </p>
+          <ul className="mt-3 divide-y divide-line rounded-lg border border-line">
+            {masteredList.map((q) => (
+              <li key={q.id} className="px-3 py-2.5 text-sm">
+                <p className="line-clamp-2">{q.questionText}</p>
+                <p className="mt-0.5 text-xs text-muted">
+                  {ch.topics.find((t) => t.id === q.topicId)?.name ?? q.topicId}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
       {last5.length > 0 ? (
         <section className="mt-10">
           <h2 className="font-display text-xl">Last tests</h2>
@@ -259,6 +292,20 @@ function ChapterPage() {
       ) : null}
     </Shell>
   );
+}
+
+function emptyMessage(mode: TestMode, hasTopic: boolean): string {
+  const where = hasTopic ? "in this topic" : "in this chapter";
+  switch (mode) {
+    case "mastered":
+      return `No mastered questions ${where} yet. A question becomes mastered once you answer it correctly twice in a row, in two separate tests.`;
+    case "wrong":
+      return `No wrong-answer questions ${where} right now. Nice work!`;
+    case "pyq":
+      return `No previous-year questions ${where} yet.`;
+    default:
+      return `No eligible questions left ${where}. Try another difficulty or Mixed mode, or revise your Wrong and Mastered questions.`;
+  }
 }
 
 function Metric({

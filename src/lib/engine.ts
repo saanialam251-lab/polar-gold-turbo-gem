@@ -77,14 +77,17 @@ export function selectQuestions(
   const tagged = pool.map((q) => ({ q, s: statusOf(states[q.id]) }));
   let eligible: Question[];
   if (mode === "wrong" || mode === "mastered" || mode === "pyq") {
-    eligible = tagged.map((t) => t.q);
+    // Review modes: every question in the pool is fair game, in random order.
+    eligible = shuffle(tagged.map((t) => t.q));
   } else {
+    // Practice modes: NEW first, then WRONG, then CORRECT. Each group is shuffled
+    // on its own, but the group order is kept so "new first" really holds.
     const neu = tagged.filter((t) => t.s === "NEW").map((t) => t.q);
     const wrong = tagged.filter((t) => t.s === "WRONG").map((t) => t.q);
     const corr = tagged.filter((t) => t.s === "CORRECT").map((t) => t.q);
     eligible = [...shuffle(neu), ...shuffle(wrong), ...shuffle(corr)];
   }
-  const selected = shuffle(eligible).slice(0, count);
+  const selected = eligible.slice(0, count);
   return {
     selected,
     exhausted: selected.length === 0,

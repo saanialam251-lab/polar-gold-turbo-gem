@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
 import { CLASSES, CLASS_META, SUBJECTS, SYLLABUS } from "@/lib/syllabus";
 import { QUESTIONS } from "@/lib/questions";
 import { chapterStats, overallStats } from "@/lib/engine";
@@ -15,6 +16,10 @@ function ProgressPage() {
   const tests = useAppStore((s) => s.tests);
   const reset = useAppStore((s) => s.resetProgress);
   const stats = overallStats(states, tests);
+  const mastered = Object.values(states).filter((s) => s.status === "MASTERED").length;
+  const inWrongPool = Object.values(states).filter((s) => s.status === "WRONG").length;
+  const [confirming, setConfirming] = useState(false);
+  const [resetDone, setResetDone] = useState(false);
 
   const bySubject = SUBJECTS.map((subject) => {
     const qs = QUESTIONS.filter((q) => q.subject === subject);
@@ -57,11 +62,13 @@ function ProgressPage() {
         </label>
       </div>
 
-      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
         <Tile k="Attempted" v={String(stats.solved)} />
         <Tile k="Last-answer correct" v={String(stats.correct)} />
         <Tile k="Last-answer wrong" v={String(stats.wrong)} />
         <Tile k="Accuracy" v={`${stats.accuracy}%`} />
+        <Tile k="Mastered" v={String(mastered)} />
+        <Tile k="In wrong pool" v={String(inWrongPool)} />
       </div>
 
       <h2 className="mt-10 font-display text-xl">By subject</h2>
@@ -132,9 +139,47 @@ function ProgressPage() {
         ))}
       </ul>
 
-      <Button variant="outline" className="mt-10" onClick={reset}>
-        Reset local progress
-      </Button>
+      <div className="mt-10">
+        {confirming ? (
+          <div className="rounded-lg border border-danger/40 bg-paper p-4">
+            <p className="text-sm">
+              Reset all progress on this device? This clears {stats.solved} attempted
+              questions, {stats.tests} tests, mastered / wrong pools and your bookmarks. Your
+              name and default class are kept.
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <Button
+                variant="danger"
+                onClick={() => {
+                  reset();
+                  setConfirming(false);
+                  setResetDone(true);
+                }}
+              >
+                Yes, reset everything
+              </Button>
+              <Button variant="outline" onClick={() => setConfirming(false)}>
+                Cancel
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <Button
+            variant="outline"
+            onClick={() => {
+              setResetDone(false);
+              setConfirming(true);
+            }}
+          >
+            Reset local progress
+          </Button>
+        )}
+        {resetDone ? (
+          <p role="status" className="mt-3 text-sm text-sage">
+            Progress reset. All counts are back to zero.
+          </p>
+        ) : null}
+      </div>
     </Shell>
   );
 }
