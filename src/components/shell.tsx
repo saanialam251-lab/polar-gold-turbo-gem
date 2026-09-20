@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Orbit, BarChart3, Home } from "lucide-react";
 import type { ReactNode } from "react";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
-import { UserButton } from "@/lib/auth/gates";
+import { AccountMenu } from "@/components/account-menu";
 
 /**
  * Same-sized slot whichever auth state we're in, so the header never jumps
@@ -13,7 +13,7 @@ function AuthSlot() {
   if (isPending) {
     return <div className="h-8 w-16 animate-pulse rounded-full bg-paper-2" />;
   }
-  if (user) return <UserButton />;
+  if (user) return <AccountMenu />;
   return (
     <Link
       to="/login"
