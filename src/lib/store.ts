@@ -10,6 +10,14 @@ import type {
   TestSession,
 } from "./types";
 
+export type ResetScope = {
+  /** Omit for "all classes"; pass a class to only touch that class's data. */
+  classId?: ClassId;
+  states?: boolean;
+  tests?: boolean;
+  bookmarks?: boolean;
+};
+
 type Profile = {
   name: string;
   classId: ClassId;
@@ -26,7 +34,9 @@ type Store = {
   lockAnswer: (questionId: string, selected: OptionId | null, timeTaken: number) => void;
   finishTest: () => CompletedTest | null;
   toggleBookmark: (id: string) => void;
-  resetProgress: () => void;
+  /** Clears exactly the categories (and class scope) passed in — nothing is
+   *  cleared by default, so a call must say what it wants gone. */
+  resetProgress: (scope: ResetScope) => void;
 };
 
 function lookupCorrect(id: string): OptionId | null {
@@ -118,7 +128,40 @@ export const useAppStore = create<Store>()(
             ? s.bookmarks.filter((x) => x !== id)
             : [...s.bookmarks, id],
         })),
-      resetProgress: () => set({ states: {}, tests: [], bookmarks: [], active: null }),
+      resetProgress: (scope) =>
+        set((s) => {
+          const idsInScope = scope.classId
+            ? new Set(QUESTIONS.filter((q) => q.class === scope.classId).map((q) => q.id))
+            : null; // null = every question, no filtering needed
+
+          const next: Partial<Store> = {};
+
+          if (scope.states) {
+            if (!idsInScope) {
+              next.states = {};
+            } else {
+              const kept: Record<string, QuestionState> = {};
+              for (const [id, st] of Object.entries(s.states)) {
+                if (!idsInScope.has(id)) kept[id] = st;
+              }
+              next.states = kept;
+            }
+          }
+
+          if (scope.tests) {
+            next.tests = idsInScope
+              ? s.tests.filter((t) => t.class !== scope.classId)
+              : [];
+          }
+
+          if (scope.bookmarks) {
+            next.bookmarks = idsInScope
+              ? s.bookmarks.filter((id) => !idsInScope.has(id))
+              : [];
+          }
+
+          return next;
+        }),
     }),
     { name: "orbit-cbse-v1", skipHydration: true },
   ),
