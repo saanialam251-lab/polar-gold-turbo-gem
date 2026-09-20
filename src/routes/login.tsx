@@ -1,10 +1,17 @@
-import { createFileRoute, Navigate } from "@tanstack/react-router";
+import { createFileRoute, Navigate, useNavigate } from "@tanstack/react-router";
 import { Eye, EyeOff } from "lucide-react";
 import { useState, type FormEvent, type ReactNode } from "react";
 import { Shell } from "@/components/shell";
 import { Button } from "@/components/ui/button";
 import { authClient, signOut } from "@/lib/auth/client";
-import { useCurrentUserState } from "@/lib/auth/use-current-user";
+import { useAppUser } from "@/lib/app-user";
+import {
+  isLocalAuth,
+  localEmailExists,
+  localResetPassword,
+  localSignIn,
+  localSignUp,
+} from "@/lib/local-auth/local-auth";
 import {
   PASSWORD_MAX,
   PASSWORD_MIN,
@@ -144,7 +151,8 @@ function QuestionSelect({
 
 function LoginPage() {
   const { notice } = Route.useSearch();
-  const { user, isPending } = useCurrentUserState();
+  const { user, isPending } = useAppUser();
+  const navigate = useNavigate();
   const setProfile = useAppStore((s) => s.setProfile);
 
   const [mode, setMode] = useState<Mode>("signin");
@@ -190,6 +198,25 @@ function LoginPage() {
     setBusy(true);
     setFinishing(true);
     try {
+      if (isLocalAuth()) {
+        const made = await localSignUp({ name, email: e, password, questionId, answer });
+        setFinishing(false);
+        if (!made.ok) {
+          if (localEmailExists(e)) {
+            switchMode("signin");
+            setEmail(e);
+            setInfo("This email already has an account. Log in instead.");
+          } else {
+            setError(made.message);
+          }
+          return;
+        }
+        setProfile({ name: name.trim() });
+        switchMode("signin");
+        setEmail(e);
+        setInfo(NOTICE_TEXT.created);
+        return;
+      }
       const { exists } = await checkEmailExists({ data: { email: e } });
       if (exists) {
         setFinishing(false);
@@ -233,6 +260,20 @@ function LoginPage() {
 
     setBusy(true);
     try {
+      if (isLocalAuth()) {
+        const res = await localSignIn(e, password);
+        if (res.ok) {
+          setProfile({ name: res.name });
+          void navigate({ to: "/" });
+        } else if (res.reason === "no-account") {
+          switchMode("signup");
+          setEmail(e);
+          setInfo("We couldn't find an account with that email. Create an account first.");
+        } else {
+          setError("Wrong password. Try again, or tap “Forgot password?” to reset it.");
+        }
+        return;
+      }
       const { exists } = await checkEmailExists({ data: { email: e } });
       if (!exists) {
         switchMode("signup");
@@ -275,6 +316,28 @@ function LoginPage() {
 
     setBusy(true);
     try {
+      if (isLocalAuth()) {
+        if (!localEmailExists(e)) {
+          switchMode("signup");
+          setEmail(e);
+          setInfo("We couldn't find an account with that email. Create an account first.");
+          return;
+        }
+        const done = await localResetPassword({
+          email: e,
+          questionId,
+          answer,
+          newPassword: password,
+        });
+        if (!done.ok) {
+          setError(done.message);
+          return;
+        }
+        switchMode("signin");
+        setEmail(e);
+        setInfo(NOTICE_TEXT.reset);
+        return;
+      }
       const { exists } = await checkEmailExists({ data: { email: e } });
       if (!exists) {
         switchMode("signup");
@@ -465,4 +528,4 @@ function LoginPage() {
       </div>
     </Shell>
   );
-        }
+      }
