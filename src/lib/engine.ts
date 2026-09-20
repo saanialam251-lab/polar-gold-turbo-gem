@@ -43,13 +43,19 @@ export function poolFor(params: {
   subject: Subject;
   chapterId: string;
   topicId?: string;
+  /** Zero or more topics to restrict to. Empty/omitted = every topic in the chapter (mixed). */
+  topicIds?: string[];
   mode: TestMode;
   difficulty: Difficulty;
   states: Record<string, QuestionState>;
 }): Question[] {
-  const { classId, subject, chapterId, topicId, mode, difficulty, states } = params;
+  const { classId, subject, chapterId, topicId, topicIds, mode, difficulty, states } = params;
   let list = questionsFor(classId, subject, chapterId);
-  if (topicId) list = list.filter((q) => q.topicId === topicId);
+  if (topicIds && topicIds.length > 0) {
+    list = list.filter((q) => topicIds.includes(q.topicId));
+  } else if (topicId) {
+    list = list.filter((q) => q.topicId === topicId);
+  }
   if (mode === "pyq") list = list.filter((q) => q.isPyq);
   if (mode === "wrong") {
     list = list.filter((q) => statusOf(states[q.id]) === "WRONG");
@@ -65,6 +71,28 @@ export function poolFor(params: {
       /* keep all topics */
     }
   }
+  return list;
+}
+
+/** Hard ceiling on how many questions any single test can offer, at any scope. */
+export const MAX_TEST_QUESTIONS = 50;
+
+/**
+ * Pool for a subject-wide test (every chapter, every topic), used by the
+ * "Start a subject test" action at the top of a subject page. Mirrors the
+ * chapter-mixed pooling rule: mastered questions are excluded, difficulty
+ * narrows the pool unless "mixed" is chosen.
+ */
+export function subjectPoolFor(params: {
+  classId: ClassId;
+  subject: Subject;
+  difficulty: Difficulty;
+  states: Record<string, QuestionState>;
+}): Question[] {
+  const { classId, subject, difficulty, states } = params;
+  let list = QUESTIONS.filter((q) => q.class === classId && q.subject === subject);
+  if (difficulty !== "mixed") list = list.filter((q) => q.difficulty === difficulty);
+  list = list.filter((q) => statusOf(states[q.id]) !== "MASTERED");
   return list;
 }
 
@@ -170,6 +198,45 @@ export function overallStats(states: Record<string, QuestionState>, tests: Compl
     correct,
     wrong,
     tests: tests.length,
+    accuracy: solved ? Math.round((correct / solved) * 100) : 0,
+  };
+}
+
+/**
+ * Same shape as overallStats, but scoped to one class (9/10/11/12). Every
+ * question id in `states` is looked up in QUESTIONS to find which class it
+ * belongs to, so a Class 9 attempt never leaks into a Class 11 total and
+ * vice versa — each class keeps its own separate analytics.
+ */
+export function classStats(
+  classId: ClassId,
+  states: Record<string, QuestionState>,
+  tests: CompletedTest[],
+) {
+  const idsInClass = new Set(QUESTIONS.filter((q) => q.class === classId).map((q) => q.id));
+  let solved = 0;
+  let correct = 0;
+  let wrong = 0;
+  let mastered = 0;
+  let inWrongPool = 0;
+  for (const [id, st] of Object.entries(states)) {
+    if (!idsInClass.has(id)) continue;
+    solved += 1;
+    if (st.status === "MASTERED") mastered += 1;
+    if (st.status === "WRONG") inWrongPool += 1;
+    const last = st.attempts.at(-1);
+    if (!last) continue;
+    if (last.correct) correct += 1;
+    else wrong += 1;
+  }
+  const classTests = tests.filter((t) => t.class === classId);
+  return {
+    solved,
+    correct,
+    wrong,
+    mastered,
+    inWrongPool,
+    tests: classTests.length,
     accuracy: solved ? Math.round((correct / solved) * 100) : 0,
   };
 }
