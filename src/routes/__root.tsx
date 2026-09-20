@@ -2,6 +2,7 @@ import { createRootRoute, HeadContent, Outlet, Scripts } from "@tanstack/react-r
 import { AuthProvider } from "@/lib/auth/provider";
 import { PreviewHostBridge } from "@/components/preview-host-bridge";
 import { PersistHydrate } from "@/components/persist-hydrate";
+import { ProgressSyncBoundary } from "@/components/progress-sync-boundary";
 import appCss from "../styles.css?url";
 
 const APP_NAME = "Orbit";
@@ -38,6 +39,7 @@ export const Route = createRootRoute({
         <PreviewHostBridge />
         <AuthProvider>
           <PersistHydrate>
+            <ProgressSyncBoundary />
             <Outlet />
           </PersistHydrate>
         </AuthProvider>
