@@ -24,8 +24,19 @@ function SubjectPage() {
   const [difficulty, setDifficulty] = useState<Difficulty>("mixed");
   const [count, setCount] = useState(20);
   const [msg, setMsg] = useState<string | null>(null);
+  const [multiSelect, setMultiSelect] = useState(false);
+  const [topicIds, setTopicIds] = useState<string[]>([]);
 
-  const pool = subjectPoolFor({ classId, subject, difficulty, states });
+  function toggleTopic(id: string) {
+    setMsg(null);
+    if (multiSelect) {
+      setTopicIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+    } else {
+      setTopicIds((prev) => (prev.length === 1 && prev[0] === id ? [] : [id]));
+    }
+  }
+
+  const pool = subjectPoolFor({ classId, subject, difficulty, states, topicIds });
   const available = pool.length;
   // Hard ceiling: even if the subject has thousands of questions, a single
   // sitting never offers more than MAX_TEST_QUESTIONS. If the subject has
@@ -49,6 +60,7 @@ function SubjectPage() {
       class: classId,
       subject,
       chapterId: SUBJECT_WIDE_CHAPTER_ID,
+      topicId: topicIds.length === 1 ? topicIds[0] : undefined,
       mode: "subject-mixed",
       difficulty,
       questionIds: selected.map((q) => q.id),
@@ -107,6 +119,57 @@ function SubjectPage() {
                 </button>
               ))}
             </div>
+            <div className="mt-4 flex items-center justify-between">
+              <label className="block text-xs text-copper-2">
+                Topics {topicIds.length > 0 ? `(${topicIds.length} selected)` : "(all)"}
+              </label>
+              <label className="flex items-center gap-1.5 text-xs text-paper/70">
+                <input
+                  type="checkbox"
+                  checked={multiSelect}
+                  onChange={() => {
+                    setMultiSelect((m) => !m);
+                    setTopicIds((prev) => (prev.length > 1 ? [] : prev));
+                  }}
+                  className="size-3.5 accent-copper"
+                />
+                Select multiple
+              </label>
+            </div>
+            <div className="mt-2 max-h-48 overflow-y-auto rounded-md border border-line/40 bg-ink-soft p-2">
+              <button
+                type="button"
+                onClick={() => setTopicIds([])}
+                className={`mb-1 block w-full rounded px-2 py-1.5 text-left text-xs ${
+                  topicIds.length === 0 ? "bg-paper text-ink" : "text-paper/80"
+                }`}
+              >
+                Mixed · any topic
+              </button>
+              {chapters.map((ch) => (
+                <div key={ch.id} className="mb-1.5">
+                  <p className="px-2 py-1 text-[10px] uppercase tracking-wide text-paper/50">
+                    {ch.name}
+                  </p>
+                  {ch.topics.map((t) => {
+                    const checked = topicIds.includes(t.id);
+                    return (
+                      <button
+                        key={t.id}
+                        type="button"
+                        onClick={() => toggleTopic(t.id)}
+                        className={`block w-full rounded px-2 py-1.5 text-left text-xs ${
+                          checked ? "bg-paper text-ink" : "text-paper/80"
+                        }`}
+                      >
+                        {t.name}
+                      </button>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+
             <label className="mt-4 block text-xs text-copper-2">
               Questions · {available} available across {subject} (max {maxCount})
             </label>
@@ -178,4 +241,4 @@ function SubjectPage() {
       </div>
     </Shell>
   );
-                }
+              }
