@@ -34,6 +34,9 @@ type Store = {
   lockAnswer: (questionId: string, selected: OptionId | null, timeTaken: number) => void;
   finishTest: () => CompletedTest | null;
   toggleBookmark: (id: string) => void;
+  /** Sends mastered questions back into circulation — status back to "NEW",
+   *  attempt history kept intact so accuracy stats aren't affected. */
+  restoreQuestions: (ids: string[]) => void;
   /** Clears exactly the categories (and class scope) passed in — nothing is
    *  cleared by default, so a call must say what it wants gone. */
   resetProgress: (scope: ResetScope) => void;
@@ -128,6 +131,17 @@ export const useAppStore = create<Store>()(
             ? s.bookmarks.filter((x) => x !== id)
             : [...s.bookmarks, id],
         })),
+      restoreQuestions: (ids) =>
+        set((s) => {
+          const idSet = new Set(ids);
+          const states = { ...s.states };
+          for (const id of idSet) {
+            const prev = states[id];
+            if (!prev) continue;
+            states[id] = { ...prev, status: "NEW", consecutiveCorrect: 0 };
+          }
+          return { states };
+        }),
       resetProgress: (scope) =>
         set((s) => {
           const idsInScope = scope.classId
