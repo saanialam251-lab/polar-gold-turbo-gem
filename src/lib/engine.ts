@@ -26,6 +26,10 @@ export function updateStatus(
     ...(prev?.attempts ?? []),
     { questionId, selected, correct, at: Date.now(), timeTaken },
   ];
+  // Mirrors the wrong pool's rule exactly: one attempt decides it. One wrong
+  // answer surfaces a question in the wrong pool immediately; one correct
+  // answer now retires it to the mastered pool immediately (previously this
+  // required two in a row — kept as a single, symmetric rule instead).
   let consecutiveCorrect = prev?.consecutiveCorrect ?? 0;
   let status: MasteryStatus;
   if (!correct) {
@@ -33,7 +37,7 @@ export function updateStatus(
     status = "WRONG";
   } else {
     consecutiveCorrect += 1;
-    status = consecutiveCorrect >= 2 ? "MASTERED" : "CORRECT";
+    status = "MASTERED";
   }
   return { status, attempts, consecutiveCorrect };
 }
@@ -88,9 +92,12 @@ export function subjectPoolFor(params: {
   subject: Subject;
   difficulty: Difficulty;
   states: Record<string, QuestionState>;
+  /** Zero or more topics (from any chapter in the subject) to restrict to. Empty/omitted = every topic. */
+  topicIds?: string[];
 }): Question[] {
-  const { classId, subject, difficulty, states } = params;
+  const { classId, subject, difficulty, states, topicIds } = params;
   let list = QUESTIONS.filter((q) => q.class === classId && q.subject === subject);
+  if (topicIds && topicIds.length > 0) list = list.filter((q) => topicIds.includes(q.topicId));
   if (difficulty !== "mixed") list = list.filter((q) => q.difficulty === difficulty);
   list = list.filter((q) => statusOf(states[q.id]) !== "MASTERED");
   return list;
@@ -239,4 +246,4 @@ export function classStats(
     tests: classTests.length,
     accuracy: solved ? Math.round((correct / solved) * 100) : 0,
   };
-}
+  }
