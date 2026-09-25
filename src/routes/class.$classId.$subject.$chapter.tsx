@@ -21,6 +21,7 @@ function ChapterPage() {
   const states = useAppStore((s) => s.states);
   const tests = useAppStore((s) => s.tests);
   const startTest = useAppStore((s) => s.startTest);
+  const restoreQuestions = useAppStore((s) => s.restoreQuestions);
   const navigate = useNavigate();
 
   const qs = questionsFor(classId, subject, chapter);
@@ -358,19 +359,39 @@ function ChapterPage() {
 
       {masteredList.length > 0 ? (
         <section className="mt-10">
-          <h2 className="font-display text-xl">Mastered questions ({masteredList.length})</h2>
+          <div className="flex items-center justify-between">
+            <h2 className="font-display text-xl">Mastered questions ({masteredList.length})</h2>
+            <button
+              type="button"
+              onClick={() => restoreQuestions(masteredList.map((q) => q.id))}
+              className="text-xs text-copper-2 underline underline-offset-4"
+            >
+              Restore all
+            </button>
+          </div>
           <p className="mt-1 text-sm text-muted">
-            Answered correctly twice in a row. Pick the Mastered mode above to revise them.
+            Answered correctly — hidden from Practice/Mixed so you don't keep
+            re-seeing what you already know. Restore one, or all, to bring it
+            back into rotation.
           </p>
           <ul className="mt-3 divide-y divide-line rounded-lg border border-line">
             {masteredList.map((q) => (
-              <li key={q.id} className="px-3 py-2.5 text-sm">
-                <p className="line-clamp-2">
-                  <MathText text={q.questionText} />
-                </p>
-                <p className="mt-0.5 text-xs text-muted">
-                  {ch.topics.find((t) => t.id === q.topicId)?.name ?? q.topicId}
-                </p>
+              <li key={q.id} className="flex items-center justify-between gap-3 px-3 py-2.5 text-sm">
+                <div className="min-w-0">
+                  <p className="line-clamp-2">
+                    <MathText text={q.questionText} />
+                  </p>
+                  <p className="mt-0.5 text-xs text-muted">
+                    {ch.topics.find((t) => t.id === q.topicId)?.name ?? q.topicId}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => restoreQuestions([q.id])}
+                  className="shrink-0 rounded-full bg-ink-soft px-3 py-1.5 text-xs text-paper"
+                >
+                  Restore
+                </button>
               </li>
             ))}
           </ul>
@@ -407,7 +428,7 @@ function emptyMessage(mode: TestMode, hasTopic: boolean): string {
   const where = hasTopic ? "in this topic" : "in this chapter";
   switch (mode) {
     case "mastered":
-      return `No mastered questions ${where} yet. A question becomes mastered once you answer it correctly twice in a row, in two separate tests.`;
+      return `No mastered questions ${where} yet. A question becomes mastered the moment you answer it correctly — it's then hidden from Practice/Mixed until you restore it.`;
     case "wrong":
       return `No wrong-answer questions ${where} right now. Nice work!`;
     case "pyq":
@@ -438,4 +459,4 @@ function Metric({
       </p>
     </div>
   );
-      }
+                    }
